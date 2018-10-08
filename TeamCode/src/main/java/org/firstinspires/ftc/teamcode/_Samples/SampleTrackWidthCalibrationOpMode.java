@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode._Samples;
 
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.TrackWidthCalibrationOpMode;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class SampleTrackWidthCalibrationOpMode extends TrackWidthCalibrationOpMode {
     @Override
     protected Drive initDrive() {
-        return new SampleMecanumDrive(hardwareMap);
+        return new SampleTankDrive(hardwareMap);
     }
 
     @Override
