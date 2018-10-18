@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.trajectory.DashboardUtil;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -15,14 +14,14 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode._Samples.SampleTankDrive;
+import org.firstinspires.ftc.teamcode._Robot.RobotDrive;
 
 @Autonomous
 public class SplineFollowOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        RobotDrive drive = new RobotDrive(hardwareMap);
         // change these constraints to something reasonable for your drive
         DriveConstraints baseConstraints = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
         TankConstraints constraints = new TankConstraints(baseConstraints, drive.getTrackWidth());

@@ -5,11 +5,13 @@ import com.acmerobotics.roadrunner.drive.TrackWidthCalibrationOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode._Robot.RobotDrive;
+
 @Autonomous
 public class SampleTrackWidthCalibrationOpMode extends TrackWidthCalibrationOpMode {
     @Override
     protected Drive initDrive() {
-        return new SampleTankDrive(hardwareMap);
+        return new RobotDrive(hardwareMap);
     }
 
     @Override

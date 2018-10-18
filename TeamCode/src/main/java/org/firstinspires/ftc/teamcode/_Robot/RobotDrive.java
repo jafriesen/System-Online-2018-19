@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode._Samples;
+package org.firstinspires.ftc.teamcode._Robot;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.drive.TankDrive;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
+import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -17,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SampleTankDrive extends TankDrive {
-    // TODO: change your drive motor
-    public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
+public class RobotDrive extends TankDrive {
+    public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class);
 
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
@@ -33,7 +33,7 @@ public class SampleTankDrive extends TankDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    public SampleTankDrive(HardwareMap hardwareMap) {
+    public RobotDrive(HardwareMap hardwareMap) {
         // TODO: this needs to be tuned using FeedforwardTuningOpMode
         super(1);
 
