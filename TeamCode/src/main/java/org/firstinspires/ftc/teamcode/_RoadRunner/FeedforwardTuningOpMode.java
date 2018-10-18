@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode._RoadRunner;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.drive.Drive;
-import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.firstinspires.ftc.teamcode.RobotDrive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
     private static List<Double> numericalDerivative(List<Double> x, List<Double> y) {
         List<Double> deriv = new ArrayList<>();
         for (int i = 2; i < x.size(); i++) {
-            deriv.add((y.get(i) - y.get(i-2)) / (x.get(i) - x.get(i-2)));
+            deriv.add((y.get(i) - y.get(i - 2)) / (x.get(i) - x.get(i - 2)));
         }
         deriv.add(0, deriv.get(0));
         deriv.add(deriv.get(deriv.size() - 1));
@@ -43,9 +43,7 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new SampleMecanumDrive(hardwareMap);
-
-        NanoClock clock = NanoClock.system();
+        Drive drive = new RobotDrive(hardwareMap);
 
         telemetry.log().add("Press play to begin the feedforward tuning routine");
         telemetry.update();
@@ -90,20 +88,20 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxVel = SampleMecanumDrive.MOTOR_CONFIG.getMaxRPM() * SampleMecanumDrive.GEAR_RATIO
-                * 2 * Math.PI * SampleMecanumDrive.WHEEL_RADIUS / 60.0;
+        double maxVel = RobotDrive.MOTOR_CONFIG.getMaxRPM() * RobotDrive.GEAR_RATIO
+                * 2 * Math.PI * RobotDrive.WHEEL_RADIUS / 60.0;
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
 
-        double startTime = clock.seconds();
+        double startTime = getSeconds();
         List<Double> timeSamples = new ArrayList<>();
         List<Double> powerSamples = new ArrayList<>();
         List<Double> positionSamples = new ArrayList<>();
 
         drive.setPoseEstimate(new Pose2d());
         while (opModeIsActive()) {
-            double elapsedTime = clock.seconds() - startTime;
+            double elapsedTime = getSeconds() - startTime;
             if (elapsedTime > rampTime) {
                 break;
             }
@@ -174,14 +172,14 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
             double maxPowerTime = DISTANCE / maxVel;
 
-            startTime = clock.seconds();
+            startTime = getSeconds();
             timeSamples.clear();
             positionSamples.clear();
 
             drive.setPoseEstimate(new Pose2d());
             drive.setVelocity(new Pose2d(MAX_POWER, 0.0, 0.0));
             while (opModeIsActive()) {
-                double elapsedTime = clock.seconds() - startTime;
+                double elapsedTime = getSeconds() - startTime;
                 if (elapsedTime > maxPowerTime) {
                     break;
                 }
@@ -218,5 +216,9 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             idle();
         }
+    }
+    
+    double getSeconds() {
+        return System.nanoTime() / 1e9;
     }
 }

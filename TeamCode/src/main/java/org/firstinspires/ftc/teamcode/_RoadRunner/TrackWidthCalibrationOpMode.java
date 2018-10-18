@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode._RoadRunner;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.RobotDrive;
 
 /*
  * This routine measures the effective track width of the drivetrain (i.e., the distance between a
@@ -19,7 +21,7 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RobotDrive drive = new RobotDrive(hardwareMap);
         BNO055IMU imu = drive.getIMU();
 
         telemetry.log().add("Press play to begin the track width calibration routine");

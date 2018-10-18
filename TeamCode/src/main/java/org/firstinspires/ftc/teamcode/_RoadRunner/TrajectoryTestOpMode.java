@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode._RoadRunner;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -8,6 +8,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.RobotDrive;
 
 /*
  * This is a simple routine to test trajectory following capabilities. It consists of two 180deg
@@ -22,7 +24,7 @@ public class TrajectoryTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RobotDrive drive = new RobotDrive(hardwareMap);
 
         // change these constraints to something reasonable for your drive
         Trajectory trajectory = drive.trajectoryBuilder()

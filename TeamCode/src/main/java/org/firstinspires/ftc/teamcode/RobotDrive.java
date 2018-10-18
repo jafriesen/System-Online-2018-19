@@ -1,19 +1,18 @@
-package org.firstinspires.ftc.teamcode._Robot;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/_Robot/RobotDrive.java
 import com.acmerobotics.roadrunner.drive.TankDrive;
-=======
 import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
+import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
+import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
 import com.qualcomm.hardware.bosch.BNO055IMU;
->>>>>>> 745240bf8e8f3616e77b5a9f9b9ad92e83882d29:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/SampleMecanumDrive.java
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
 import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
@@ -31,13 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/_Robot/RobotDrive.java
-public class RobotDrive extends TankDrive {
-    public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class);
-
-=======
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class RobotDrive extends TankDrive {
     /*
      * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
      * fields may also be edited through the dashboard (connect to the robot's WiFi network and
@@ -46,14 +40,14 @@ public class SampleMecanumDrive extends MecanumDrive {
      */
     public static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
->>>>>>> 745240bf8e8f3616e77b5a9f9b9ad92e83882d29:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/SampleMecanumDrive.java
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1; // output/input
+    public static double GEAR_RATIO = 2; // output/input
     public static double TRACK_WIDTH = 1; // in
 
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
+    public static double maximumVelocity = 20.0, maximumAcceleration = 30.0;
+    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(maximumVelocity, maximumAcceleration, Math.PI / 2, Math.PI / 2);
 
     public static double kV = 0;
     public static double kA = 0;
@@ -69,23 +63,17 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/_Robot/RobotDrive.java
     public RobotDrive(HardwareMap hardwareMap) {
-        // TODO: this needs to be tuned using FeedforwardTuningOpMode
-        super(1);
-=======
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(TRACK_WIDTH);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new MecanumPIDVAFollower(this, TRANSLATIONAL_PID, HEADING_PID, kV, kA, kStatic);
+        constraints = new TankConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        follower = new TankPIDVAFollower(this, TRANSLATIONAL_PID, HEADING_PID, kV, kA, kStatic);
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
->>>>>>> 745240bf8e8f3616e77b5a9f9b9ad92e83882d29:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/SampleMecanumDrive.java
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -138,7 +126,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     // TODO: if you don't want to use the IMU for localization, remove this method
     @Nullable
-    @Override
     public Double getHeading() {
         return (double) imu.getAngularOrientation().firstAngle;
     }
