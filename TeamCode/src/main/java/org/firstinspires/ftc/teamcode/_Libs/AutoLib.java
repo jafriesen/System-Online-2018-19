@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode._Libs;
 
-import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,11 +13,6 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode._Libs.DistanceSensor;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Created by phanau on 12/14/15.
  */
 
-// a library of classes that support autonomous CustomOpMode programming
+// a library of classes that support autonomous AutoOpMode programming
 public class AutoLib {
 
     // the base class from which everything else derives.
@@ -245,13 +239,13 @@ public class AutoLib {
     // a simple Step that just logs its existence for a given number of loop() calls
     // really just for testing sequencer stuff, not for actual use on a robot.
     static public class LogCountStep extends Step {
-        CustomOpMode mOpMode;     // needed so we can log output
+        AutoOpMode mOpMode;     // needed so we can log output
         String mName;       // name of the output field
         int mCount;         // current loop count of this Step
         int mCount0;     // original loop count
 
-        public LogCountStep(CustomOpMode CustomOpMode, String name, int loopCount) {
-            mOpMode = CustomOpMode;
+        public LogCountStep(AutoOpMode AutoOpMode, String name, int loopCount) {
+            mOpMode = AutoOpMode;
             mName = name;
             mCount = mCount0 = loopCount;
         }
@@ -281,12 +275,12 @@ public class AutoLib {
 
     // a simple Step that just logs its existence for a given length of time
     static public class LogTimeStep extends Step {
-        CustomOpMode mOpMode;     // needed so we can log output
+        AutoOpMode mOpMode;     // needed so we can log output
         String mName;       // name of the output field
         Timer mTimer;       // Timer for this Step
 
-        public LogTimeStep(CustomOpMode CustomOpMode, String name, double seconds) {
-            mOpMode = CustomOpMode;
+        public LogTimeStep(AutoOpMode AutoOpMode, String name, double seconds) {
+            mOpMode = AutoOpMode;
             mName = name;
             mTimer = new Timer(seconds);
         }
@@ -565,13 +559,13 @@ public class AutoLib {
         private float mPower;                               // basic power setting of all 4 motors -- adjusted for steering along path
         private float mMaxPower = 1.0f;                     // maximum power for any motor
         private float mHeading;                             // compass heading to steer for (-180 .. +180 degrees)
-        private CustomOpMode mOpMode;                             // needed so we can log output (may be null)
+        private AutoOpMode mOpMode;                             // needed so we can log output (may be null)
         private HeadingSensor mGyro;                        // sensor to use for heading information (e.g. Gyro or Vuforia)
         private SensorLib.PID mPid;                         // proportional–integral–derivative controller (PID controller)
         private double mPrevTime;                           // time of previous loop() call
         private ArrayList<SetPower> mMotorSteps;            // the motor steps we're guiding - assumed order is right ... left ...
 
-        public GyroGuideStep(CustomOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public GyroGuideStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
                              ArrayList<SetPower> motorsteps, float power) {
             mOpMode = mode;
             mHeading = heading;
@@ -591,7 +585,7 @@ public class AutoLib {
 
             // initialize previous-time on our first call -> dt will be zero on first call
             if (firstLoopCall()) {
-                mPrevTime = mOpMode.getRuntime();           // use timer provided by CustomOpMode
+                mPrevTime = mOpMode.getRuntime();           // use timer provided by AutoOpMode
             }
 
             float heading = mGyro.getHeading();     // get latest reading from direction sensor
@@ -711,14 +705,14 @@ public class AutoLib {
     // pass in an empty set of motors to just do the test (e.g. for use with WaitTimeTestStep).
     static public class DistanceSensorGuideStep extends Step {
 
-        private CustomOpMode mOpMode;                     // for telemetry output (optional)
+        private AutoOpMode mOpMode;                     // for telemetry output (optional)
         private DistanceSensor mDistanceSensor;     // distance sensor to read
         private float mDistance;                    // stopping distance
         private ArrayList<SetPower> mSteps;         // motors to stop at given distance
 
-        public DistanceSensorGuideStep(CustomOpMode CustomOpMode, DistanceSensor ds, float distance, ArrayList<SetPower> steps)
+        public DistanceSensorGuideStep(AutoOpMode AutoOpMode, DistanceSensor ds, float distance, ArrayList<SetPower> steps)
         {
-            mOpMode = CustomOpMode;
+            mOpMode = AutoOpMode;
             mDistanceSensor = ds;
             mDistance = distance;
             mSteps = steps;
@@ -746,7 +740,7 @@ public class AutoLib {
     // until the terminatorStep tells us that we're there, thereby terminating this step.
     static public class GuidedTerminatedDriveStep extends AutoLib.ConcurrentSequence {
 
-        public GuidedTerminatedDriveStep(CustomOpMode mode, AutoLib.MotorGuideStep guideStep, AutoLib.Step terminatorStep, DcMotor[] motors)
+        public GuidedTerminatedDriveStep(AutoOpMode mode, AutoLib.MotorGuideStep guideStep, AutoLib.Step terminatorStep, DcMotor[] motors)
         {
             // add a concurrent Step to control each motor
             ArrayList<AutoLib.SetPower> steps = new ArrayList<AutoLib.SetPower>();
@@ -783,7 +777,7 @@ public class AutoLib {
         AutoLib.GyroGuideStep guideStep;
         GyroTestHeadingStep testStep;
 
-        public GyroRotateStep(CustomOpMode mode, DcMotor[] motors, float maxPower, HeadingSensor gyro, SensorLib.PID pid, float heading, float tolerance) {
+        public GyroRotateStep(AutoOpMode mode, DcMotor[] motors, float maxPower, HeadingSensor gyro, SensorLib.PID pid, float heading, float tolerance) {
             // add a concurrent Step to control each motor
             ArrayList<AutoLib.SetPower> steps = new ArrayList<AutoLib.SetPower>();
             for (DcMotor em : motors)
@@ -822,13 +816,13 @@ public class AutoLib {
         private float mDirection;                           // relative direction along which the robot should move (0 ahead; positive CCW)
         private float mHeading;                             // orientation the robot should maintain while moving
         private float mMaxPower;
-        private CustomOpMode mOpMode;                             // needed so we can log output (may be null)
+        private AutoOpMode mOpMode;                             // needed so we can log output (may be null)
         private HeadingSensor mGyro;                        // sensor to use for heading information (e.g. Gyro or Vuforia)
         private SensorLib.PID mPid;                         // proportional–integral–derivative controller (PID controller)
         private double mPrevTime;                           // time of previous loop() call
         private ArrayList<AutoLib.SetPower> mMotorSteps;    // the motor steps we're guiding - assumed order is fr, br, fl, bl
 
-        public SquirrelyGyroGuideStep(CustomOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public SquirrelyGyroGuideStep(AutoOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
                                       ArrayList<AutoLib.SetPower> motorsteps, float power) {
             mOpMode = mode;
             mDirection = direction;
@@ -874,7 +868,7 @@ public class AutoLib {
 
             // initialize previous-time on our first call -> dt will be zero on first call
             if (firstLoopCall()) {
-                mPrevTime = mOpMode.getRuntime();           // use timer provided by CustomOpMode
+                mPrevTime = mOpMode.getRuntime();           // use timer provided by AutoOpMode
             }
 
             final float heading = mGyro.getHeading();     // get latest reading from direction sensor
@@ -935,7 +929,7 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthTimedDriveStep extends ConcurrentSequence {
 
-        public AzimuthTimedDriveStep(CustomOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
                                      DcMotor motors[], float power, float time, boolean stop)
         {
             // add a concurrent Step to control each motor
@@ -968,7 +962,7 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthCountedDriveStep extends ConcurrentSequence {
 
-        public AzimuthCountedDriveStep(CustomOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthCountedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
                                        DcMotor motors[], float power, int count, boolean stop)
         {
             // add a concurrent Step to control each motor
@@ -1002,8 +996,8 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthDistanceDriveStep extends ConcurrentSequence {
 
-        public AzimuthDistanceDriveStep(CustomOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
-                                     DcMotor motors[], float power, DistanceSensor ds, float distance)
+        public AzimuthDistanceDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+                                        DcMotor motors[], float power, DistanceSensor ds, float distance)
         {
             // add a concurrent Step to control each motor
             ArrayList<SetPower> steps = new ArrayList<SetPower>();
@@ -1036,8 +1030,8 @@ public class AutoLib {
     // uses a SquirrelyGyroGuideStep to adjust power to 4 motors in assumed order fr, br, fl, bl
     static public class SquirrelyGyroTimedDriveStep extends AutoLib.ConcurrentSequence {
 
-        public SquirrelyGyroTimedDriveStep(CustomOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
-                                              DcMotor motors[], float power, float time, boolean stop)
+        public SquirrelyGyroTimedDriveStep(AutoOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
+                                           DcMotor motors[], float power, float time, boolean stop)
         {
             // add a concurrent Step to control each motor
             ArrayList<AutoLib.SetPower> steps = new ArrayList<AutoLib.SetPower>();
@@ -1067,8 +1061,8 @@ public class AutoLib {
     // uses a SquirrelyGyroGuideStep to adjust power to 4 motors in assumed order fr, br, fl, bl
     static public class SquirrelyGyroCountedDriveStep extends ConcurrentSequence {
 
-        public SquirrelyGyroCountedDriveStep(CustomOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
-                                       DcMotor motors[], float power, int count, boolean stop)
+        public SquirrelyGyroCountedDriveStep(AutoOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
+                                             DcMotor motors[], float power, int count, boolean stop)
         {
             // add a concurrent Step to control each motor
             ArrayList<SetPower> steps = new ArrayList<SetPower>();
@@ -1101,7 +1095,7 @@ public class AutoLib {
     // and a DistanceSensorGuideStep to determine when to stop.
     static public class SquirrelyGyroDistanceDriveStep extends ConcurrentSequence {
 
-        public SquirrelyGyroDistanceDriveStep(CustomOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public SquirrelyGyroDistanceDriveStep(AutoOpMode mode, float direction, float heading, HeadingSensor gyro, SensorLib.PID pid,
                                               DcMotor motors[], float power, DistanceSensor ds, float distance)
         {
             // add a concurrent Step to control each motor
@@ -1368,7 +1362,7 @@ public class AutoLib {
     // a dummy DcMotor that just logs commands we send to it --
 // useful for testing Motor code when you don't have real hardware handy
     static public class TestMotor extends TestHardware implements DcMotor {
-        CustomOpMode mOpMode;     // needed for logging data
+        AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this motor
         double mPower;      // current power setting
         DcMotor.RunMode mMode;
@@ -1380,9 +1374,9 @@ public class AutoLib {
         int mMaxSpeed;
         MotorConfigurationType mMotorType;
 
-        public TestMotor(String name, CustomOpMode CustomOpMode) {
+        public TestMotor(String name, AutoOpMode AutoOpMode) {
             super();     // init base class (real DcMotor) with dummy data
-            mOpMode = CustomOpMode;
+            mOpMode = AutoOpMode;
             mName = name;
             mPower = 0.0;
             mMaxSpeed = 0;
@@ -1498,16 +1492,16 @@ public class AutoLib {
     // a dummy Servo that just logs commands we send to it --
 // useful for testing Servo code when you don't have real hardware handy
     static public class TestServo extends TestHardware implements Servo {
-        CustomOpMode mOpMode;     // needed for logging data
+        AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this servo
         double mPosition;   // current target position
         Direction mDirection;
         double mScaleMin;
         double mScaleMax;
 
-        public TestServo(String name, CustomOpMode CustomOpMode) {
+        public TestServo(String name, AutoOpMode AutoOpMode) {
             super();     // init base class (real DcMotor) with dummy data
-            mOpMode = CustomOpMode;
+            mOpMode = AutoOpMode;
             mName = name;
             mPosition = 0.0;
         }
@@ -1562,12 +1556,12 @@ public class AutoLib {
     // a dummy Gyro that just returns default info --
 // useful for testing Gyro code when you don't have real hardware handy
     static public class TestGyro extends TestHardware implements GyroSensor {
-        CustomOpMode mOpMode;     // needed for logging data
+        AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this gyro
 
-        public TestGyro(String name, CustomOpMode CustomOpMode) {
+        public TestGyro(String name, AutoOpMode AutoOpMode) {
             super();
-            mOpMode = CustomOpMode;
+            mOpMode = AutoOpMode;
             mName = name;
         }
 
@@ -1587,12 +1581,12 @@ public class AutoLib {
     // a dummy ColorSensor that just returns default info --
 // useful for testing ColorSensor code when you don't have real hardware handy
     static public class TestColorSensor extends TestHardware implements ColorSensor {
-        CustomOpMode mOpMode;     // needed for logging data
+        AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this gyro
 
-        public TestColorSensor(String name, CustomOpMode CustomOpMode) {
+        public TestColorSensor(String name, AutoOpMode AutoOpMode) {
             super();
-            mOpMode = CustomOpMode;
+            mOpMode = AutoOpMode;
             mName = name;
         }
 
@@ -1664,10 +1658,10 @@ public class AutoLib {
 
     // this implementation generates test-hardware objects that just log data
     static public class TestHardwareFactory implements HardwareFactory {
-        CustomOpMode mOpMode;     // needed for logging data
+        AutoOpMode mOpMode;     // needed for logging data
 
-        public TestHardwareFactory(CustomOpMode CustomOpMode) {
-            mOpMode = CustomOpMode;
+        public TestHardwareFactory(AutoOpMode AutoOpMode) {
+            mOpMode = AutoOpMode;
         }
 
         public DcMotor getDcMotor(String name){
@@ -1691,12 +1685,12 @@ public class AutoLib {
         }
     }
 
-    // this implementation gets real hardware objects from the hardwareMap of the given CustomOpMode
+    // this implementation gets real hardware objects from the hardwareMap of the given AutoOpMode
     static public class RealHardwareFactory implements HardwareFactory {
-        CustomOpMode mOpMode;     // needed for access to hardwareMap
+        AutoOpMode mOpMode;     // needed for access to hardwareMap
 
-        public RealHardwareFactory(CustomOpMode CustomOpMode) {
-            mOpMode = CustomOpMode;
+        public RealHardwareFactory(AutoOpMode AutoOpMode) {
+            mOpMode = AutoOpMode;
         }
 
         public DcMotor getDcMotor(String name){
@@ -1708,7 +1702,7 @@ public class AutoLib {
                 // okay -- just return null (absent) for this motor
             }
 
-            // just to make sure - a previous CustomOpMode may have set it differently ...
+            // just to make sure - a previous AutoOpMode may have set it differently ...
             if (motor != null)
                 motor.setDirection(DcMotor.Direction.FORWARD);
 
@@ -1724,7 +1718,7 @@ public class AutoLib {
                 // okay -- just return null (absent) for this motor
             }
 
-            // just to make sure - a previous CustomOpMode may have set it differently ...
+            // just to make sure - a previous AutoOpMode may have set it differently ...
             if (motor != null)
                 motor.setDirection(DcMotorEx.Direction.FORWARD);
 
@@ -1740,7 +1734,7 @@ public class AutoLib {
                 // okay - just return null (absent) for this servo
             }
 
-            // just to make sure - a previous CustomOpMode may have set it differently ...
+            // just to make sure - a previous AutoOpMode may have set it differently ...
             if (servo != null)
                 servo.setDirection(Servo.Direction.FORWARD);
 
@@ -1797,9 +1791,9 @@ public class AutoLib {
 
     static public class TestStep extends Step {
         float mTestValue;
-        CustomOpMode mOpMode;
+        AutoOpMode mOpMode;
 
-        public TestStep(CustomOpMode opMode, float value) {
+        public TestStep(AutoOpMode opMode, float value) {
             mOpMode = opMode;
             mTestValue = value;
         }

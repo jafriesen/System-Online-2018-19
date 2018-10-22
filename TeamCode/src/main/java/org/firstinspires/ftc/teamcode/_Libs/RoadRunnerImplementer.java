@@ -17,37 +17,16 @@ import org.firstinspires.ftc.teamcode.RobotDrive;
 import org.firstinspires.ftc.teamcode._RoadRunner.DashboardUtil;
 
 public class RoadRunnerImplementer {
-    public class FollowTrajectory extends AutoLib.Step {
+    static public class Follow2dTrajectory extends AutoLib.Step {
         TankPIDVAFollower mFollower;
         Trajectory mTrajectory;
         RobotDrive mDrive;
         FtcDashboard mDashboard;
 
-        public FollowTrajectory(HardwareMap hardwareMap, FtcDashboard dashboard, Trajectory trajectory) {
-            mDrive = new RobotDrive(hardwareMap);
-            // change these constraints to something reasonable for your drive
-            DriveConstraints baseConstraints = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
-            TankConstraints constraints = new TankConstraints(baseConstraints, mDrive.getTrackWidth());
-            // change these constraints to something reasonable for your drive
-            mTrajectory = trajectory = mDrive.trajectoryBuilder()
-                    .turnTo(Math.PI)
-                    .waitFor(2)
-                    .turnTo(0)
-                    .waitFor(2)
-                    .lineTo(new Vector2d(60, 0))
-                    .waitFor(2)
-                    .splineTo(new Pose2d(0, 40, 0))
-                    .build();
-
-            // TODO: tune kV, kA, and kStatic in the following follower
-            // then tune the PID coefficients after you verify the open loop response is roughly correct
-            mFollower = new TankPIDVAFollower(
-                    mDrive,
-                    new PIDCoefficients(0, 0, 0),
-                    new PIDCoefficients(0, 0, 0),
-                    0,
-                    0,
-                    0);
+        public Follow2dTrajectory(RobotDrive drive, FtcDashboard dashboard, Trajectory trajectory) {
+            mDashboard = dashboard;
+            mDrive = drive;
+            mTrajectory = trajectory;
         }
 
         public boolean loop()
@@ -79,6 +58,5 @@ public class RoadRunnerImplementer {
 
             return !mDrive.isFollowingTrajectory();
         }
-
     }
 }

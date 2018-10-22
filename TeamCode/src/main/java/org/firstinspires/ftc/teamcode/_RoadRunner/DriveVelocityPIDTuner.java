@@ -84,12 +84,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 activeProfile = MotionProfileGenerator.generateMotionProfile(start, goal, new MotionConstraints() {
                     @Override
                     public double maximumVelocity(double v) {
-                        return RobotDrive.maximumVelocity;
+                        return RobotDrive.BASE_CONSTRAINTS.maximumVelocity;
                     }
 
                     @Override
                     public double maximumAcceleration(double v) {
-                        return RobotDrive.maximumAcceleration;
+                        return RobotDrive.BASE_CONSTRAINTS.maximumAcceleration;
                     }
                 }, 250);
                 profileStartTimestamp = getSeconds();

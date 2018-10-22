@@ -4,8 +4,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.acmerobotics.dashboard.FtcDashboard;
+import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 
-public class CustomOpMode extends OpMode {
+public class AutoOpMode extends OpMode {
     public TelemetryPacket packet = new TelemetryPacket();
     public AutoLib.Sequence mSequence;             // the root of the sequence tree
     public boolean bDone;                          // true when the programmed sequence is done
@@ -14,7 +15,14 @@ public class CustomOpMode extends OpMode {
 
     @Override
     public void init() {
+        mHardwareFactory = new AutoLib.RealHardwareFactory(this);
 
+        // create the root Sequence for this autonomous OpMode
+        mSequence = new AutoLib.LinearSequence();
+        setup();
+
+        // start out not-done
+        bDone = false;
     }
 
     @Override
@@ -32,4 +40,6 @@ public class CustomOpMode extends OpMode {
     public void stop() {
         super.stop();
     }
+
+    public void setup() {}
 }

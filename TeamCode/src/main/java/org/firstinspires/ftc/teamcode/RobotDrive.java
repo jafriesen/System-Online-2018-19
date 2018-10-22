@@ -39,15 +39,14 @@ public class RobotDrive extends TankDrive {
      * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
      */
     public static final MotorConfigurationType MOTOR_CONFIG =
-            MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
+            MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     public static double WHEEL_RADIUS = 2; // in
     public static double GEAR_RATIO = 2; // output/input
     public static double TRACK_WIDTH = 1; // in
 
-    public static double maximumVelocity = 20.0, maximumAcceleration = 30.0;
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(maximumVelocity, maximumAcceleration, Math.PI / 2, Math.PI / 2);
+    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
 
     public static double kV = 0;
     public static double kA = 0;
