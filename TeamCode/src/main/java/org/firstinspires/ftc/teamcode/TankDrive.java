@@ -40,8 +40,11 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name="Tank Drive 10565", group="TeleOp")  // @Autonomous(...) is the other common choice
 public class TankDrive extends OpMode {
 
-	DcMotor motorRight;
-	DcMotor motorLeft;
+	DcMotor motorFrontRight;
+	DcMotor motorFrontLeft;
+	DcMotor motorBackRight;
+	DcMotor motorBackLeft;
+
 
 	float power = 0;
 
@@ -54,10 +57,13 @@ public class TankDrive extends OpMode {
 
 	public void init() {
 
-		motorRight = hardwareMap.dcMotor.get("right");
-		motorLeft = hardwareMap.dcMotor.get("left");
+		motorFrontRight = hardwareMap.dcMotor.get("fr");
+		motorFrontLeft = hardwareMap.dcMotor.get("fl");
+		motorBackRight = hardwareMap.dcMotor.get("br");
+		motorBackLeft = hardwareMap.dcMotor.get("bl");
 
-		motorRight.setDirection(DcMotor.Direction.REVERSE);
+		motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+		motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 	}
 
 
@@ -75,8 +81,10 @@ public class TankDrive extends OpMode {
 		right = Range.clip(right, -1, 1);
 
 		// write the values to the motors
-		motorRight.setPower(right);
-		motorLeft.setPower(left);
+		motorFrontRight.setPower(right);
+		motorBackRight.setPower(right);
+		motorFrontLeft.setPower(left);
+		motorBackLeft.setPower(left);
 
 		/*
 		 * Send telemetry data back to driver station.
