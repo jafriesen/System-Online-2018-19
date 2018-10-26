@@ -1,47 +1,62 @@
 package org.firstinspires.ftc.teamcode._Libs;
 
-import java.util.ArrayList;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
+import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.RobotDrive;
+import org.firstinspires.ftc.teamcode._RoadRunner.DashboardUtil;
 
 public class RoadRunnerImplementer {
-    static public class FollowTrajectory extends AutoLib.MotorGuideStep {
-        private float mPower;                               // basic power setting of all 4 motors -- adjusted for steering along path
-        private float mMaxPower = 1.0f;                     // maximum power for any motor
-        private float mHeading;                             // compass heading to steer for (-180 .. +180 degrees)
-        private CustomOpMode mOpMode;                             // needed so we can log output (may be null)
-        private HeadingSensor mGyro;                        // sensor to use for heading information (e.g. Gyro or Vuforia)
-        private SensorLib.PID mPid;                         // proportional–integral–derivative controller (PID controller)
-        private double mPrevTime;                           // time of previous loop() call
-        private ArrayList<AutoLib.SetPower> mMotorSteps;            // the motor steps we're guiding - assumed order is right ... left ...
+    static public class Follow2dTrajectory extends AutoLib.Step {
+        TankPIDVAFollower mFollower;
+        Trajectory mTrajectory;
+        RobotDrive mDrive;
+        FtcDashboard mDashboard;
 
-        public FollowTrajectory(CustomOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
-                             ArrayList<AutoLib.SetPower> motorsteps, float power) {
-            mOpMode = mode;
-            mHeading = heading;
-            mGyro = gyro;
-            mPid = pid;
-            mMotorSteps = motorsteps;
-            mPower = power;
+        public Follow2dTrajectory(RobotDrive drive, FtcDashboard dashboard, Trajectory trajectory) {
+            mDashboard = dashboard;
+            mDrive = drive;
+            mTrajectory = trajectory;
         }
 
         public boolean loop()
         {
             super.loop();
 
-            return true;
-        }
+            if(firstLoopCall()) {
+                mDrive.followTrajectory(mTrajectory);
+            }
 
-        // set motor control steps this step should control (assumes ctor called with null argument)
-        public void set(ArrayList<AutoLib.SetPower> motorsteps)
-        {
-            mMotorSteps = motorsteps;
-        }
+            Pose2d currentPose = mDrive.getPoseEstimate();
 
-        // update target direction, heading, and power --
-        // used by interactive teleop modes to redirect the step from controller input
-        public void set(float heading,float power) {
-            mHeading = heading;
-            mPower = power;
-        }
+            TelemetryPacket packet = new TelemetryPacket();
+            Canvas fieldOverlay = packet.fieldOverlay();
 
+            packet.put("x", currentPose.getX());
+            packet.put("y", currentPose.getY());
+            packet.put("heading", currentPose.getHeading());
+
+            fieldOverlay.setStroke("green");
+            DashboardUtil.drawSampledTrajectory(fieldOverlay, mTrajectory);
+
+            fieldOverlay.setFill("blue");
+            fieldOverlay.fillCircle(currentPose.getX(), currentPose.getY(), 3);
+
+            mDashboard.sendTelemetryPacket(packet);
+
+            mDrive.update();
+
+            return !mDrive.isFollowingTrajectory();
+        }
     }
 }

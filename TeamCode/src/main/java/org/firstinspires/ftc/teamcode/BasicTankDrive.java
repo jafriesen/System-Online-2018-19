@@ -37,8 +37,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Tank Drive 10565", group="TeleOp")  // @Autonomous(...) is the other common choice
-public class TankDrive extends OpMode {
+@TeleOp(name="Tank Drive", group="TeleOp")
+public class BasicTankDrive extends OpMode {
 
 	DcMotor motorFrontRight;
 	DcMotor motorFrontLeft;
@@ -48,10 +48,7 @@ public class TankDrive extends OpMode {
 
 	float power = 0;
 
-	/**
-	 * Constructor
-	 */
-	public TankDrive() {
+	public BasicTankDrive() {
 
 	}
 
@@ -105,5 +102,4 @@ public class TankDrive extends OpMode {
 	double scaleInput(double dVal)  {
 		return dVal*dVal*dVal;		// maps {-1,1} -> {-1,1}
 	}
-
 }
