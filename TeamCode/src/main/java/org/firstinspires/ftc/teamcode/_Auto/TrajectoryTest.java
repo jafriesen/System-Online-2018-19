@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotDrive;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 
-@Autonomous(name="Example", group="Autonomous")
+@Autonomous(name="Trajectory Test", group="Autonomous")
 public class TrajectoryTest extends AutoOpMode {
     Trajectory mTrajectory;
     RobotDrive mDrive;

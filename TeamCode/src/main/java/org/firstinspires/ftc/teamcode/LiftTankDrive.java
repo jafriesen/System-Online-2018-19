@@ -60,7 +60,7 @@ public class LiftTankDrive extends OpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("fl");
         motorBackRight = hardwareMap.dcMotor.get("br");
         motorBackLeft = hardwareMap.dcMotor.get("bl");
-        motorLift = hardwareMap.dcMotor.get("Lift");
+        motorLift = hardwareMap.dcMotor.get("lift");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);

@@ -59,8 +59,8 @@ public class BasicTankDrive extends OpMode {
 		motorBackRight = hardwareMap.dcMotor.get("br");
 		motorBackLeft = hardwareMap.dcMotor.get("bl");
 
-		motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-		motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+		motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+		motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 	}
 
 

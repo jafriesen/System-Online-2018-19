@@ -947,6 +947,24 @@ public class AutoLib {
 
         }
 
+        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+                                     DcMotorEx motors[], float power, float time, boolean stop)
+        {
+            // add a concurrent Step to control each motor
+            ArrayList<SetPower> steps = new ArrayList<SetPower>();
+            for (DcMotor em : motors)
+                if (em != null) {
+                    TimedMotorStep step = new TimedMotorStep(em, power, time, stop);
+                    this.add(step);
+                    steps.add(step);
+                }
+
+            // add a concurrent Step to control the motor steps based on gyro input
+            // put it at the front of the list so it can update the motors BEFORE their steps run
+            this.preAdd(new GyroGuideStep(mode, heading, gyro, pid, steps, power));
+
+        }
+
         // the base class loop function does all we need -- it will return "done" when
         // all the motors are done.
 
