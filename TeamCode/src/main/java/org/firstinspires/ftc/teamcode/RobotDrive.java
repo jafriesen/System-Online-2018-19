@@ -43,7 +43,7 @@ public class RobotDrive extends TankDrive {
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 2; // output/input
+    public static double GEAR_RATIO = 1; // output/input
     public static double TRACK_WIDTH = 1; // in
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
@@ -74,10 +74,10 @@ public class RobotDrive extends TankDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "fl");
+        leftRear = hardwareMap.get(DcMotorEx.class, "bl");
+        rightRear = hardwareMap.get(DcMotorEx.class, "br");
+        rightFront = hardwareMap.get(DcMotorEx.class, "fr");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -125,6 +125,7 @@ public class RobotDrive extends TankDrive {
 
     // TODO: if you don't want to use the IMU for localization, remove this method
     @Nullable
+    @Override
     public Double getHeading() {
         return (double) imu.getAngularOrientation().firstAngle;
     }
@@ -143,9 +144,8 @@ public class RobotDrive extends TankDrive {
     @Override
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            wheelPositions.add(encoderTicksToInches(motors.get(i).getCurrentPosition()));
-        }
+        wheelPositions.add(encoderTicksToInches((motors.get(0).getCurrentPosition() + motors.get(1).getCurrentPosition()) / 2));
+        wheelPositions.add(encoderTicksToInches((motors.get(2).getCurrentPosition() + motors.get(3).getCurrentPosition()) / 2));
         return wheelPositions;
     }
 

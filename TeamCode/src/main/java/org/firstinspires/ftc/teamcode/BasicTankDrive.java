@@ -45,15 +45,7 @@ public class BasicTankDrive extends OpMode {
 	DcMotor motorBackRight;
 	DcMotor motorBackLeft;
 
-
-	float power = 0;
-
-	public BasicTankDrive() {
-
-	}
-
 	public void init() {
-
 		motorFrontRight = hardwareMap.dcMotor.get("fr");
 		motorFrontLeft = hardwareMap.dcMotor.get("fl");
 		motorBackRight = hardwareMap.dcMotor.get("br");
@@ -88,6 +80,10 @@ public class BasicTankDrive extends OpMode {
 		 */
 		telemetry.addData("Text", "*** v2.1 ***");
 		telemetry.addData("gamepad1:", gamepad1);
+		telemetry.addData("front left:", motorFrontLeft.getCurrentPosition());
+		telemetry.addData("back left:", motorBackLeft.getCurrentPosition());
+		telemetry.addData("front right:", motorFrontRight.getCurrentPosition());
+		telemetry.addData("back right:", motorBackRight.getCurrentPosition());
 	}
 
 	public void stop() {

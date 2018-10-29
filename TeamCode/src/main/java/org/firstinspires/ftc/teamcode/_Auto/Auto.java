@@ -15,12 +15,10 @@ import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 
 @Autonomous(name="Scrim Auto", group="Autonomous")
 public class Auto extends AutoOpMode {
-    Trajectory mTrajectory;
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    FtcDashboard mDashboard;
 
     @Override
     public void setup() {

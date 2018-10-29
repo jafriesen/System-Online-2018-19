@@ -15,14 +15,12 @@ import org.firstinspires.ftc.teamcode.RobotDrive;
  */
 @Config
 @Autonomous
-public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
+public class TrackWidthCalibrationOpMode extends LinearOpMode {
     public static int TOTAL_REVOLUTIONS = 4;
     public static double POWER = 0.3;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotDrive drive = new RobotDrive(hardwareMap);
-        BNO055IMU imu = drive.getIMU();
 
         telemetry.log().add("Press play to begin the track width calibration routine");
         telemetry.log().add("Make sure your robot has enough clearance to turn smoothly");
@@ -30,6 +28,9 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+
+        RobotDrive drive = new RobotDrive(hardwareMap);
+        BNO055IMU imu = drive.getIMU();
 
         telemetry.log().clear();
         telemetry.log().add("Running...");
