@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode._RoadRunner;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryConfig;

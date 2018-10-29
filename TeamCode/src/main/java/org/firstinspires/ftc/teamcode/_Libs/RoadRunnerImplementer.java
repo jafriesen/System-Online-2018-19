@@ -4,26 +4,20 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RobotDrive;
-import org.firstinspires.ftc.teamcode._RoadRunner.DashboardUtil;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 public class RoadRunnerImplementer {
     static public class Follow2dTrajectory extends AutoLib.Step {
         TankPIDVAFollower mFollower;
         Trajectory mTrajectory;
-        RobotDrive mDrive;
+        SampleTankDriveOptimized mDrive;
         FtcDashboard mDashboard;
 
-        public Follow2dTrajectory(RobotDrive drive, FtcDashboard dashboard, Trajectory trajectory) {
+        public Follow2dTrajectory(SampleTankDriveOptimized drive, FtcDashboard dashboard, Trajectory trajectory) {
             mDashboard = dashboard;
             mDrive = drive;
             mTrajectory = trajectory;

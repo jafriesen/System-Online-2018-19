@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode._Auto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.RobotDrive;
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
-import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 
 @Autonomous(name="Scrim Auto", group="Autonomous")
 public class Auto extends AutoOpMode {

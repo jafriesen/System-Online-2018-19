@@ -5,21 +5,20 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.RobotDrive;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
 
 @Autonomous(name="Trajectory Test", group="Autonomous")
 public class TrajectoryTest extends AutoOpMode {
     Trajectory mTrajectory;
-    RobotDrive mDrive;
+    SampleTankDriveOptimized mDrive;
     FtcDashboard mDashboard;
 
     @Override
     public void setup() {
-        mDrive = new RobotDrive(hardwareMap);
+        mDrive = new SampleTankDriveOptimized(hardwareMap);
 
         mDashboard = FtcDashboard.getInstance();
 

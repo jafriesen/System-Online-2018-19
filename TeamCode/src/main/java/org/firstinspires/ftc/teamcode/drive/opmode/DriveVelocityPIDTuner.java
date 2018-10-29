@@ -1,20 +1,21 @@
-package org.firstinspires.ftc.teamcode._RoadRunner;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.profile.MotionConstraints;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.RobotDrive;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +42,15 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        RobotDrive drive = new RobotDrive(hardwareMap);
+        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
         PIDFCoefficients currentCoeffs = drive.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         MOTOR_PIDF = pidfCopy(currentCoeffs);
         dashboard.updateConfig();
 
         RobotLog.i("Initial motor PIDF coefficients: " + MOTOR_PIDF);
+
+        NanoClock clock = NanoClock.system();
 
         telemetry.log().add("Ready!");
         telemetry.update();
@@ -57,14 +60,14 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        MotionProfile activeProfile = null;
+        MotionProfile activeProfile = new MotionProfile();
         boolean movingForwards = false;
 
         List<Double> lastWheelPositions = null;
         double lastTimestamp = 0;
-        double profileStartTimestamp = getSeconds();
+        double profileStartTimestamp = clock.seconds();
 
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             // update the coefficients if necessary
             if (!pidfEquals(currentCoeffs, MOTOR_PIDF)) {
                 RobotLog.i("Updated motor PIDF coefficients: " + MOTOR_PIDF);
@@ -73,7 +76,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
             }
 
             // calculate and set the motor power
-            double profileTime = getSeconds() - profileStartTimestamp;
+            double profileTime = clock.seconds() - profileStartTimestamp;
             double dt = profileTime - lastTimestamp;
             lastTimestamp = profileTime;
             if (profileTime > activeProfile.duration()) {
@@ -81,21 +84,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 movingForwards = !movingForwards;
                 MotionState start = new MotionState(movingForwards ? 0 : DISTANCE, 0, 0, 0);
                 MotionState goal = new MotionState(movingForwards ? DISTANCE : 0, 0, 0, 0);
-                activeProfile = MotionProfileGenerator.generateMotionProfile(start, goal, new MotionConstraints() {
-                    @Override
-                    public double maximumVelocity(double v) {
-                        return RobotDrive.BASE_CONSTRAINTS.maximumVelocity;
-                    }
-
-                    @Override
-                    public double maximumAcceleration(double v) {
-                        return RobotDrive.BASE_CONSTRAINTS.maximumAcceleration;
-                    }
-                }, 250);
-                profileStartTimestamp = getSeconds();
+                activeProfile = MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
+                        DriveConstants.BASE_CONSTRAINTS.maximumVelocity, DriveConstants.BASE_CONSTRAINTS.maximumAcceleration);
+                profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
-            double targetPower = RobotDrive.kV * motionState.getV();
+            double targetPower = DriveConstants.kV * motionState.getV();
             drive.setVelocity(new Pose2d(targetPower, 0, 0));
 
             List<Double> wheelPositions = drive.getWheelPositions();
@@ -125,9 +119,5 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
     private static PIDFCoefficients pidfCopy(PIDFCoefficients coeff) {
         return new PIDFCoefficients(coeff.p, coeff.i, coeff.d, coeff.f, coeff.algorithm);
-    }
-
-    double getSeconds() {
-        return System.nanoTime() / 1e9;
     }
 }

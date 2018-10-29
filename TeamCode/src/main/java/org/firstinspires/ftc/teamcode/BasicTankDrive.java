@@ -31,28 +31,56 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+
+import java.util.List;
 
 @TeleOp(name="Tank Drive", group="TeleOp")
 public class BasicTankDrive extends OpMode {
 
-	DcMotor motorFrontRight;
-	DcMotor motorFrontLeft;
-	DcMotor motorBackRight;
-	DcMotor motorBackLeft;
+	ExpansionHubMotor motorFrontRight;
+	ExpansionHubMotor motorFrontLeft;
+	ExpansionHubMotor motorBackRight;
+	ExpansionHubMotor motorBackLeft;
+	ExpansionHubEx hub;
+	BNO055IMU imu;
 
 	public void init() {
-		motorFrontRight = hardwareMap.dcMotor.get("fr");
-		motorFrontLeft = hardwareMap.dcMotor.get("fl");
-		motorBackRight = hardwareMap.dcMotor.get("br");
-		motorBackLeft = hardwareMap.dcMotor.get("bl");
+		hub = hardwareMap.get(ExpansionHubEx.class, "hub");
+
+		imu = LynxOptimizedI2cFactory.createLynxEmbeddedImu(hub.getStandardModule(), 0);
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+		imu.initialize(parameters);
+
+		// add/remove motors depending on your robot (e.g., 6WD)
+		motorFrontLeft = hardwareMap.get(ExpansionHubMotor.class, "fl");
+		motorBackLeft = hardwareMap.get(ExpansionHubMotor.class, "bl");
+		motorBackRight = hardwareMap.get(ExpansionHubMotor.class, "br");
+		motorFrontRight = hardwareMap.get(ExpansionHubMotor.class, "fr");
 
 		motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
 		motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+		motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 	}
 
 
@@ -62,8 +90,8 @@ public class BasicTankDrive extends OpMode {
 
 		// scale the joystick value to make it easier to control
 		// the robot more precisely at slower speeds.
-		left =  (float)scaleInput(left);
-		right = (float)scaleInput(right);
+		//left =  (float)scaleInput(left);
+		//right = (float)scaleInput(right);
 
 		// clip the right/left values so that the values never exceed +/- 1
 		left = Range.clip(left, -1, 1);
