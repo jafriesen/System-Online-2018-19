@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
 
         PIDFCoefficients currentCoeffs = drive.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         MOTOR_PIDF = pidfCopy(currentCoeffs);

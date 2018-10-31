@@ -45,42 +45,34 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.List;
 
+import static com.sun.tools.doclint.Entity.and;
+
 @TeleOp(name="Tank Drive", group="TeleOp")
 public class BasicTankDrive extends OpMode {
 
-	ExpansionHubMotor motorFrontRight;
-	ExpansionHubMotor motorFrontLeft;
-	ExpansionHubMotor motorBackRight;
-	ExpansionHubMotor motorBackLeft;
-	ExpansionHubEx hub;
-	BNO055IMU imu;
+    DcMotorEx motorFrontRight;
+    DcMotorEx motorFrontLeft;
+    DcMotorEx motorBackRight;
+    DcMotorEx motorBackLeft;
 
 	public void init() {
-		hub = hardwareMap.get(ExpansionHubEx.class, "hub");
+		motorFrontLeft = hardwareMap.get(DcMotorEx.class, "fl");
+		motorBackLeft = hardwareMap.get(DcMotorEx.class, "bl");
+		motorBackRight = hardwareMap.get(DcMotorEx.class, "br");
+		motorFrontRight = hardwareMap.get(DcMotorEx.class, "fr");
 
-		imu = LynxOptimizedI2cFactory.createLynxEmbeddedImu(hub.getStandardModule(), 0);
-		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-		parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-		imu.initialize(parameters);
+		motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+		motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
 
-		// add/remove motors depending on your robot (e.g., 6WD)
-		motorFrontLeft = hardwareMap.get(ExpansionHubMotor.class, "fl");
-		motorBackLeft = hardwareMap.get(ExpansionHubMotor.class, "bl");
-		motorBackRight = hardwareMap.get(ExpansionHubMotor.class, "br");
-		motorFrontRight = hardwareMap.get(ExpansionHubMotor.class, "fr");
+		motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+		motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-		motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-		motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-
-		motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-		motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		motorFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motorBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+		motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 	}
 
 
@@ -97,11 +89,21 @@ public class BasicTankDrive extends OpMode {
 		left = Range.clip(left, -1, 1);
 		right = Range.clip(right, -1, 1);
 
-		// write the values to the motors
-		motorFrontRight.setPower(right);
-		motorBackRight.setPower(right);
-		motorFrontLeft.setPower(left);
-		motorBackLeft.setPower(left);
+		boolean slowMode = gamepad1.left_bumper;
+
+		if(slowMode) {
+            motorFrontRight.setPower(right/2);
+            motorBackRight.setPower(right/2);
+            motorFrontLeft.setPower(left/2);
+            motorBackLeft.setPower(left/2);
+        }
+        else {
+            motorFrontRight.setPower(right);
+            motorBackRight.setPower(right);
+            motorFrontLeft.setPower(left);
+            motorBackLeft.setPower(left);
+        }
+
 
 		/*
 		 * Send telemetry data back to driver station.

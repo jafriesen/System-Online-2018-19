@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /*
@@ -19,7 +20,7 @@ public class SplineTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .splineTo(new Pose2d(30, 30, 0))

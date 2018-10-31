@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.drive.Kinematics;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
+import com.acmerobotics.roadrunner.drive.TankDrive;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -16,6 +17,8 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
 
 /*
  * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
@@ -32,9 +35,9 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
         // it's important that the IMU/gyro/heading sensor is not part of the localization
-        drive.setLocalizer(new MecanumDrive.MecanumLocalizer(drive, false));
+        drive.setLocalizer(new TankDrive.TankLocalizer(drive, false));
 
         telemetry.log().add("Press play to begin the track width calibration routine");
         telemetry.log().add("Make sure your robot has enough clearance to turn smoothly");
