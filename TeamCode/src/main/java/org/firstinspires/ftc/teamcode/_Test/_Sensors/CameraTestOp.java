@@ -26,6 +26,7 @@ public class CameraTestOp extends OpMode {
     int pixels[];
     byte simple[];
     PedestrianDetector cubeDetect;
+    int counter;
 
     @Override
     public void init(){
@@ -34,6 +35,8 @@ public class CameraTestOp extends OpMode {
         pixels = new int[640*480];
         simple = new byte[640*480];
         cubeDetect = new PedestrianDetector();
+        msStuckDetectLoop = 1000000;
+        counter = 0;
     }
 
     @Override
@@ -46,11 +49,25 @@ public class CameraTestOp extends OpMode {
         vLib.loop(true);
         Bitmap bm = vLib.getBitmap();
         int bmArray[] = new int[bm.getWidth()*bm.getHeight()];
-        bm.getPixels(bmArray, 0, bm.getWidth(),0,0, bm.getWidth(),bm.getHeight());
-        if(bm.getHeight()/480 > bm.getWidth()/640){scaleDown(bmArray, pixels, bm.getHeight()/480);}else{scaleDown(bmArray,pixels,bm.getWidth()/640);}
-        telemetry.addData("Top Left Pixel", String.format("0x%08x", pixels[0]));
-        //this.convertToSimpleColorRaster(pixels, simple, 480,640,640);
-        //List<MovingBlob> blobs = this.cubeDetect.getAllBlobs(simple, 640);
+        if(counter % 5 == 0) {
+            bm.getPixels(bmArray, 0, bm.getWidth(), 0, 0, bm.getWidth(), bm.getHeight());
+            if (bm.getHeight() / 480 > bm.getWidth() / 640) {
+                scaleDown(bmArray, pixels, bm.getHeight() / 480);
+            } else {
+                scaleDown(bmArray, pixels, bm.getWidth() / 640);
+            }
+            telemetry.addData("Top Left Pixel", String.format("0x%08x", pixels[0]));
+            this.convertToSimpleColorRaster(pixels, simple, 480, 640, 640);
+            List<MovingBlob> blobs = this.cubeDetect.getAllBlobs(simple, 640);
+            ArrayList<MovingBlob> yellowBlobs = new ArrayList<MovingBlob>();
+            telemetry.addData("Number of Blobs", blobs.size());
+            for(MovingBlob blob : blobs){
+                if(blob.color.getColor() == Color.YELLOW){
+                    yellowBlobs.add(blob);
+                }
+            }
+            telemetry.addData("No of Yellow Blobs", yellowBlobs.size());
+        }
     }
 
     public static void convertToSimpleColorRaster(int rgb[], byte[] simple, int nrows, int ncols, int frameWidth) {
@@ -109,6 +126,16 @@ public class CameraTestOp extends OpMode {
         }catch(Exception e){
 
         }
+    }
+
+    public boolean detectCube(MovingBlob blob){
+        if(blob.height - blob.width < 25 &&
+            blob.color.getColor() == Color.YELLOW &&
+                blob.y < 380 && blob.y > 100   ){
+            blob.seen = true;
+            return true;
+        }
+        return false;
     }
 
 }
