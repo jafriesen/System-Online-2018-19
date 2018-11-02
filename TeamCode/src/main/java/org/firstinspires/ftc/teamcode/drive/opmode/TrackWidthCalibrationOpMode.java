@@ -10,8 +10,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+<<<<<<< HEAD
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
+=======
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
 
 /*
  * This routine measures the effective track width of the drive (i.e., the distance between a
@@ -30,7 +35,11 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+<<<<<<< HEAD
         SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
+=======
+        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
         // it's important that the IMU/gyro/heading sensor is not part of the localization
         drive.setLocalizer(new TankDrive.TankLocalizer(drive, false));
 

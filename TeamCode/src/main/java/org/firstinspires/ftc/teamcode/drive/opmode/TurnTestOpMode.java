@@ -8,8 +8,13 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+<<<<<<< HEAD
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
+=======
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /*
@@ -21,7 +26,11 @@ public class TurnTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
+<<<<<<< HEAD
         SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
+=======
+        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .turnTo(Math.PI / 2)
@@ -42,6 +51,7 @@ public class TurnTestOpMode extends LinearOpMode {
             packet.put("y", currentPose.getY());
             packet.put("heading", currentPose.getHeading());
 
+            fieldOverlay.setStrokeWidth(4);
             fieldOverlay.setStroke("green");
             DashboardUtil.drawSampledTrajectory(fieldOverlay, trajectory);
 

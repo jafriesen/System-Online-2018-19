@@ -16,9 +16,14 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+<<<<<<< HEAD
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveSimple;
+=======
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
 
 /*
  * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
@@ -35,7 +40,11 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+<<<<<<< HEAD
         SampleTankDriveSimple drive = new SampleTankDriveSimple(hardwareMap);
+=======
+        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
+>>>>>>> 911931b2aa94eae6718e38c240ee6b8eb3da5add
         // it's important that the IMU/gyro/heading sensor is not part of the localization
         drive.setLocalizer(new TankDrive.TankLocalizer(drive, false));
 
@@ -62,12 +71,12 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
             MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     new MotionState(0, 0, 0, 0),
                     new MotionState(CIRCUMFERENTIAL_DISTANCE, 0, 0, 0),
-                    0.5 * DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
-                    0.5 * DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
+                    DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
+                    DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
             );
 
             double startTime = clock.seconds();
-            while (!this.isStopRequested() && this.isStarted()) {
+            while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > profile.duration()) {
                     drive.setVelocity(new Pose2d(0, 0, 0));
@@ -77,12 +86,13 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
                 double heading = drive.getExternalHeading();
                 // accumulator is an unwrapped version of the heading
                 headingAccumulator += Angle.norm(heading - lastHeading);
+                lastHeading = heading;
 
                 MotionState state = profile.get(elapsedTime);
                 drive.setVelocity(new Pose2d(0, 0,
                         Kinematics.calculateMotorFeedforward(
                                 state.getV(),
-                                0.0,
+                                state.getA(),
                                 DriveConstants.kV,
                                 DriveConstants.kA,
                                 DriveConstants.kStatic
