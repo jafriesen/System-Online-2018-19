@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -62,20 +63,25 @@ public class LiftTankDrive extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("bl");
         motorLift = hardwareMap.dcMotor.get("lift");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        motorFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
     public void loop() {
-        float left = gamepad1.left_stick_y;
-        float right = gamepad1.right_stick_y;
+        float right = gamepad1.left_stick_y;    // currently switched so switch which side is front
+        float left = gamepad1.right_stick_y;
         float rt = (1 - gamepad1.right_trigger)/2;
         float lt = (1 - gamepad1.left_trigger)/2;
         float liftPower = 0;
@@ -97,10 +103,20 @@ public class LiftTankDrive extends OpMode {
         liftPower = rt - lt;
 
         // write the values to the motors
-        motorFrontRight.setPower(right);
-        motorBackRight.setPower(right);
-        motorFrontLeft.setPower(left);
-        motorBackLeft.setPower(left);
+        boolean slowMode = gamepad1.left_bumper;
+        if(slowMode) {
+            motorFrontRight.setPower(right/2);
+            motorBackRight.setPower(right/2);
+            motorFrontLeft.setPower(left/2);
+            motorBackLeft.setPower(left/2);
+        }
+        else {
+            motorFrontRight.setPower(right);
+            motorBackRight.setPower(right);
+            motorFrontLeft.setPower(left);
+            motorBackLeft.setPower(left);
+        }
+
         if(gamepad1.dpad_up){
             motorLift.setPower(1);
         }else if(gamepad1.dpad_down){

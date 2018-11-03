@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 
-@Autonomous(name="Claim Auto", group="Autonomous")
-public class Auto extends AutoOpMode {
+@Autonomous(name="Park Auto", group="Autonomous")
+public class Auto2 extends AutoOpMode {
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
@@ -28,8 +28,6 @@ public class Auto extends AutoOpMode {
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, 0.8, 2, true));
-        mSequence.add(new AutoLib.ServoStep(marker, 1));
-        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, -0.8, 1.0, true));
+        mSequence.add(new AutoLib.MoveByEncoderStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, 0.8, 2200, true));
     }
 }
