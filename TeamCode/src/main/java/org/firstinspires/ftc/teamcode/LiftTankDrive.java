@@ -70,21 +70,32 @@ public class LiftTankDrive extends OpMode {
     public void loop() {
         float left = gamepad1.left_stick_y;
         float right = gamepad1.right_stick_y;
+        float rt = gamepad1.right_trigger/2;
+        float lt = gamepad1.left_trigger/2;
+        float liftPower = 0;
 
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.
         left =  (float)scaleInput(left);
         right = (float)scaleInput(right);
+        rt = (float)scaleInput(rt);
+        lt = (float)scaleInput(lt);
+
+
 
         // clip the right/left values so that the values never exceed +/- 1
         left = Range.clip(left, -1, 1);
         right = Range.clip(right, -1, 1);
+        rt = Range.clip(rt,(float)0,(float)0.5);
+        lt = Range.clip(lt,(float)0,(float)0.5);
+        liftPower = rt - lt;
 
         // write the values to the motors
         motorFrontRight.setPower(right);
         motorBackRight.setPower(right);
         motorFrontLeft.setPower(left);
         motorBackLeft.setPower(left);
+        motorLift.setPower(liftPower);
 
         /*
          * Send telemetry data back to driver station.
