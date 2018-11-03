@@ -62,16 +62,22 @@ public class LiftTankDrive extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("bl");
         motorLift = hardwareMap.dcMotor.get("lift");
 
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
     public void loop() {
         float left = gamepad1.left_stick_y;
         float right = gamepad1.right_stick_y;
-        float rt = gamepad1.right_trigger/2;
-        float lt = gamepad1.left_trigger/2;
+        float rt = (1 - gamepad1.right_trigger)/2;
+        float lt = (1 - gamepad1.left_trigger)/2;
         float liftPower = 0;
 
         // scale the joystick value to make it easier to control
@@ -95,7 +101,13 @@ public class LiftTankDrive extends OpMode {
         motorBackRight.setPower(right);
         motorFrontLeft.setPower(left);
         motorBackLeft.setPower(left);
-        motorLift.setPower(liftPower);
+        if(gamepad1.dpad_up){
+            motorLift.setPower(1);
+        }else if(gamepad1.dpad_down){
+            motorLift.setPower(-1);
+        }else{
+            motorLift.setPower(0);
+        }
 
         /*
          * Send telemetry data back to driver station.
