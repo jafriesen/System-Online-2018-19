@@ -8,17 +8,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
-import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 
 @Autonomous(name="Trajectory Test", group="Autonomous")
 public class TrajectoryTest extends AutoOpMode {
     Trajectory mTrajectory;
-    SampleTankDriveOptimized mDrive;
+    SampleTankDriveREV mDrive;
     FtcDashboard mDashboard;
 
     @Override
     public void setup() {
-        mDrive = new SampleTankDriveOptimized(hardwareMap);
+        mDrive = new SampleTankDriveREV(hardwareMap);
 
         mDashboard = FtcDashboard.getInstance();
 
@@ -33,6 +33,6 @@ public class TrajectoryTest extends AutoOpMode {
                 .splineTo(new Pose2d(0, 40, 0))
                 .build();
 
-        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(mDrive, mDashboard, mTrajectory));
+        //mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(mDrive, mDashboard, mTrajectory));
     }
 }

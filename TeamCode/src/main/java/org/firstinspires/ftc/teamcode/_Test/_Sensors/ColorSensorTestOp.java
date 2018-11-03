@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorHTColor;
+//import org.firstinspires.ftc.robotcontroller.external.samples.SensorHTColor;
 
 
 /**

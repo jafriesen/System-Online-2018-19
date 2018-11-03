@@ -7,17 +7,17 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
-import org.firstinspires.ftc.teamcode.drive.SampleTankDriveOptimized;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 public class RoadRunnerImplementer {
     static public class Follow2dTrajectory extends AutoLib.Step {
         TankPIDVAFollower mFollower;
         Trajectory mTrajectory;
-        SampleTankDriveOptimized mDrive;
+        SampleTankDriveREV mDrive;
         FtcDashboard mDashboard;
 
-        public Follow2dTrajectory(SampleTankDriveOptimized drive, FtcDashboard dashboard, Trajectory trajectory) {
+        public Follow2dTrajectory(SampleTankDriveREV drive, FtcDashboard dashboard, Trajectory trajectory) {
             mDashboard = dashboard;
             mDrive = drive;
             mTrajectory = trajectory;
