@@ -47,7 +47,7 @@ public class CameraTestOp extends OpMode {
     @Override
     public void loop(){
         vLib.loop(true);
-        Bitmap bm = vLib.getBitmap();
+        Bitmap bm = vLib.getBitmap(4);
         int bmArray[] = new int[bm.getWidth()*bm.getHeight()];
         if(counter % 5 == 0) {
             bm.getPixels(bmArray, 0, bm.getWidth(), 0, 0, bm.getWidth(), bm.getHeight());

@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode._Libs;
 
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.vuforia.Frame;
+import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
@@ -20,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -121,11 +125,11 @@ public class VuforiaLib_RoverRuckus implements HeadingSensor, LocationSensor {
 
         // the indices used below are determined by the order of the entries in the RoverRuckus.xml file
         trackables = this.vuforia.loadTrackablesFromAsset("RoverRuckus");
-        VuforiaTrackable craterTarget = trackables.get(3);
+        VuforiaTrackable craterTarget = trackables.get(2);
         craterTarget.setName("Craters");
-        VuforiaTrackable footprintTarget = trackables.get(2);
+        VuforiaTrackable footprintTarget = trackables.get(1);
         footprintTarget.setName("Footprint");
-        VuforiaTrackable nebulaTarget = trackables.get(1);
+        VuforiaTrackable nebulaTarget = trackables.get(3);
         nebulaTarget.setName("Nebula");
         VuforiaTrackable roverTarget = trackables.get(0);
         roverTarget.setName("Rover");
@@ -206,12 +210,12 @@ public class VuforiaLib_RoverRuckus implements HeadingSensor, LocationSensor {
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 180, 0)));
 
-       /*
-        * To place the Footprint Target on the wall:
-        * - First we rotate it 90 around the field's X axis to flip it upright
-        * - Then we rotate it -90 around the field's Z axis to align it with the Red wall.
-        * - Finally, we translate it in X and Y to its position on the wall.
-      */
+        /*
+         * To place the Footprint Target on the wall:
+         * - First we rotate it 90 around the field's X axis to flip it upright
+         * - Then we rotate it -90 around the field's Z axis to align it with the Red wall.
+         * - Finally, we translate it in X and Y to its position on the wall.
+         */
         footprintTarget.setLocation(OpenGLMatrix
                 .translation(mmFTCFieldWidth/2, 0, mmFTCTargetCenterZ)
                 .multiplied(Orientation.getRotationMatrix(
@@ -219,22 +223,22 @@ public class VuforiaLib_RoverRuckus implements HeadingSensor, LocationSensor {
                         AngleUnit.DEGREES, 90, -90, 0)));
 
         /*
-        * To place the Nebula Target on the wall:
-        * - First we rotate it 90 around the field's X axis to flip it upright
-        * - Finally, we translate it in X and Y to its position on the Back wall.
-        */
+         * To place the Nebula Target on the wall:
+         * - First we rotate it 90 around the field's X axis to flip it upright
+         * - Finally, we translate it in X and Y to its position on the Back wall.
+         */
         nebulaTarget.setLocation(OpenGLMatrix
-                .translation(0, -mmFTCFieldWidth/2, mmFTCTargetCenterZ)
+                .translation(0, mmFTCFieldWidth/2, mmFTCTargetCenterZ)
                 .multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0)));
 
         /*
-        * To place the Rover Target on the wall:
-        * - First we rotate it 90 around the field's X axis to flip it upright
-        * - Then we rotate it 90 around the field's Z axis to align it with the Blue wall.
-        * - Finally, we translate it in X and Y to its position on the wall.
-        */
+         * To place the Rover Target on the wall:
+         * - First we rotate it 90 around the field's X axis to flip it upright
+         * - Then we rotate it 90 around the field's Z axis to align it with the Blue wall.
+         * - Finally, we translate it in X and Y to its position on the wall.
+         */
         roverTarget.setLocation(OpenGLMatrix
                 .translation(-mmFTCFieldWidth/2, 0, mmFTCTargetCenterZ)
                 .multiplied(Orientation.getRotationMatrix(
@@ -287,7 +291,7 @@ public class VuforiaLib_RoverRuckus implements HeadingSensor, LocationSensor {
          * @see VuforiaTrackableDefaultListener#getRobotLocation()
          */
 
-        // get access to video frames so we can do other processing like looking for red/blue beacons
+        // get access to video frames so we can do other processing like looking for scene objects
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true); //enables RGB format for the image
         vuforia.setFrameQueueCapacity(1);
         mFrameQueue = vuforia.getFrameQueue();
@@ -417,28 +421,99 @@ public class VuforiaLib_RoverRuckus implements HeadingSensor, LocationSensor {
         return String.format("%s", orientation.toString());
     }
 
-    // get access to video frames for other uses
-    public VuforiaLocalizer.CloseableFrame getFrame() {
+
+    // get a bitmap from Vuforia - these are our own versions from 2017 code --
+    // they don't use Vuforia convertFrameToBitmap function, which are essentially the same as these but don't do scaling or cropping as we do.
+
+    // get entire image downsampled by an integer factor (e.g. 4 gives an image 1/4 the height and width of what the camera delivered)
+    public Bitmap getBitmap(int sample) {
+        return getBitmap(new RectF(0,0,1,1), sample);
+    }
+
+    // get entire image scaled by the given scale factor
+    // (e.g. 4 gives an image 1/4 the height and width of what the camera delivered)
+    public Bitmap getBitmap(float scale) {
+        return getBitmap(new RectF(0,0,1,1), scale);
+    }
+
+    // get entire image scaled to the given width and height (result will be distorted if you don't get this right)
+    public Bitmap getBitmap(int width, int height) {
+        return getBitmap(new RectF(0,0,1,1), 0, width, height);
+    }
+
+    // get a cropped portion of the camera image downsampled by an integer factor
+    // (e.g. sample=4 gives an image 1/4 the height and width of the cropped portion)
+    public Bitmap getBitmap(RectF rect, int sample) {
+        return getBitmap(rect, 1.0f/sample, 0, 0);
+    }
+
+    // get a cropped portion of the camera image scaled by a given factor
+    // (e.g. scale=0.25 gives an image 1/4 the height and width of the cropped portion)
+    public Bitmap getBitmap(RectF rect, float scale) {
+        return getBitmap(rect, scale, 0, 0);
+    }
+
+    // get a cropped portion of the camera image scaled to the given width and height (result will be distorted if you don't get this right)
+    public Bitmap getBitmap(RectF rect, int width, int height) {
+        return getBitmap(rect, 0, width, height);
+    }
+
+    // this function handles all the various ways of describing the final output size
+    // rect is the portion of the source image you want, normalized 0..1 in both axes
+    private Bitmap getBitmap(RectF rect, float scale, int height, int width) {
         try {
-            if (mFrameQueue != null)
-                mCF = mFrameQueue.take();
+            VuforiaLocalizer.CloseableFrame frame = mFrameQueue.take();
+            int img = 0;
+            for (; img < frame.getNumImages(); img++) {
+                //telemetry.addData("Image format " + img, frame.getImage(img).getFormat());
+                if (frame.getImage(img).getFormat() == PIXEL_FORMAT.RGB565) break;
+            }
+
+            if (img == frame.getNumImages()) throw new IllegalArgumentException("Incorrect format");
+
+            // get the Image with the correct format and extract its data
+            Image image = frame.getImage(img);
+            ByteBuffer byteBuffer = image.getPixels();
+
+            int h = image.getHeight();    // height of src data
+            int w = image.getWidth();     // width of src data
+
+            // convert the data to a Bitmap
+            byteBuffer.rewind();
+            Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+            bitmap.copyPixelsFromBuffer(byteBuffer);
+
+            // crop the Bitmap if requested
+            Bitmap bitmapCropped = bitmap;
+            int ch = Math.round(h*rect.height());    // height of cropped src data
+            int cw = Math.round(w*rect.width());     // width of cropped src data
+            if (ch < h || cw < w) {
+                bitmapCropped = Bitmap.createBitmap(bitmap,
+                        Math.max(0, Math.round(w*rect.left)), Math.max(0, Math.round(h*rect.top)), cw, ch);
+                h = ch; w = cw;
+            }
+
+            // get requested output size in one of several ways
+            int dstW = cw;
+            int dstH = ch;
+            if (width>0 && height>0) {
+                dstW = width;
+                dstH = height;
+            }
+            else if (scale > 0) {
+                dstW = (int)(cw*scale);
+                dstH = (int)(ch*scale);
+            }
+
+            // scale the (possibly cropped) result bitmap to the requested size
+            Bitmap bitmapScaled = Bitmap.createScaledBitmap(bitmapCropped, dstW, dstH, true);
+
+            frame.close();
+
+            return bitmapScaled;
         }
-        catch(Exception e) {
-        }
-        return mCF;
+        catch (Exception e) {}
 
-    }
-
-    public void releaseFrame()
-    {
-        if (mCF != null)
-            mCF.close();
-        mCF = null;         // forget the frame
-    }
-
-    public Bitmap getBitmap(){
-        Bitmap bm = vuforia.convertFrameToBitmap(getFrame());
-        releaseFrame();
-        return bm;
+        return null;
     }
 }
