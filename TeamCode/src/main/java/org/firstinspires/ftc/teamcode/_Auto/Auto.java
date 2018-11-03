@@ -28,6 +28,7 @@ public class Auto extends AutoOpMode {
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
+        mSequence.add(new AutoLib.ServoStep(marker, 0));
         mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, 0.8, 2, true));
         mSequence.add(new AutoLib.ServoStep(marker, 1));
         mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, -0.8, 1.0, true));
