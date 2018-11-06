@@ -25,12 +25,12 @@ public class Auto extends AutoOpMode {
 
         marker = hardwareMap.servo.get("marker");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        mSequence.add(new AutoLib.ServoStep(marker, 0));
-        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, 0.8, 2, true));
-        mSequence.add(new AutoLib.ServoStep(marker, 1));
-        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, -0.8, 1.0, true));
+        mSequence.add(new AutoLib.ServoStep(marker, 0.0));
+        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, 0.8, 1, true));
+        mSequence.add(new AutoLib.ServoStep(marker, 1.0));
+        mSequence.add(new AutoLib.MoveByTimeStep(motorFrontRight, motorBackRight, motorFrontLeft, motorBackLeft, -0.8, 0.2, true));
     }
 }
