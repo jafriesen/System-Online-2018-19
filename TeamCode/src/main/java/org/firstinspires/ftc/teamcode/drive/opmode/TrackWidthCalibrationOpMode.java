@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 
 /*
@@ -32,7 +33,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
         // it's important that the IMU/gyro/heading sensor is not part of the localization
         drive.setLocalizer(new TankDrive.TankLocalizer(drive, false));
 

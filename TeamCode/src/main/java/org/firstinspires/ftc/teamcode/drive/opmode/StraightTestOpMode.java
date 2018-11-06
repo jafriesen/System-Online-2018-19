@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
@@ -20,7 +21,7 @@ public class StraightTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .forward(60)

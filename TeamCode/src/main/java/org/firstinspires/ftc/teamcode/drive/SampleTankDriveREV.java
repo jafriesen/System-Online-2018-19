@@ -36,8 +36,8 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "br");
         DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "fr");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
         leftMotors = Arrays.asList(leftFront, leftRear);

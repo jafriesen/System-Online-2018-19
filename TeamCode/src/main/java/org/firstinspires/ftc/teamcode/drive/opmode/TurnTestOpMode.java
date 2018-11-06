@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
@@ -21,7 +22,7 @@ public class TurnTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .turnTo(Math.PI / 2)

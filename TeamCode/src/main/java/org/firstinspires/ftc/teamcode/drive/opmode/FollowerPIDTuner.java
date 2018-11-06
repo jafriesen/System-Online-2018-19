@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
@@ -18,7 +20,7 @@ public class FollowerPIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
 
         drive.setPoseEstimate(new Pose2d(-24, -24, 0));
         Trajectory trajectory = drive.trajectoryBuilder()
