@@ -50,6 +50,7 @@ public class LiftTankDrive extends OpMode {
 
 
     float power = 0;
+    boolean lowPowerLift = false;
 
     public LiftTankDrive() {
 
@@ -76,6 +77,8 @@ public class LiftTankDrive extends OpMode {
         motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lowPowerLift = false;
     }
 
 
@@ -85,6 +88,7 @@ public class LiftTankDrive extends OpMode {
         float rt = (1 - gamepad1.right_trigger)/2;
         float lt = (1 - gamepad1.left_trigger)/2;
         float liftPower = 0;
+
 
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.
@@ -117,12 +121,26 @@ public class LiftTankDrive extends OpMode {
             motorBackLeft.setPower(left);
         }
 
-        if(gamepad1.dpad_up){
+        if(gamepad1.x){
+            lowPowerLift = true;
+        }else if(gamepad1.y){
+            lowPowerLift = false;
+        }
+
+        if(lowPowerLift) {
+            motorLift.setPower(-0.15);
+        } else if(gamepad1.dpad_up){
             motorLift.setPower(1);
         }else if(gamepad1.dpad_down){
             motorLift.setPower(-1);
         }else{
             motorLift.setPower(0);
+        }
+
+        if(lowPowerLift){
+            telemetry.addData("Low Power Lift", "On");
+        }else{
+            telemetry.addData("Low Power Lift", "Off");
         }
 
         /*
