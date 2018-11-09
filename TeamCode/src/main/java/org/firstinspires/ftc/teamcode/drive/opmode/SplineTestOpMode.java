@@ -22,7 +22,7 @@ public class SplineTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
+        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .splineTo(new Pose2d(30, 30, 0))

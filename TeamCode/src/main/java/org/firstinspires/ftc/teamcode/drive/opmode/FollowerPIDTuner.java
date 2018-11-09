@@ -20,7 +20,7 @@ public class FollowerPIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
+        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
 
         drive.setPoseEstimate(new Pose2d(-24, -24, 0));
         Trajectory trajectory = drive.trajectoryBuilder()

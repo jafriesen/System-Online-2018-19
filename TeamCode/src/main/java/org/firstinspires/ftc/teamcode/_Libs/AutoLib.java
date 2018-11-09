@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Created by phanau on 12/14/15.
  */
 
-// a library of classes that support autonomous AutoOpMode programming
+// a library of classes that support autonomous opmode programming
 public class AutoLib {
 
     // the base class from which everything else derives.
@@ -244,8 +244,8 @@ public class AutoLib {
         int mCount;         // current loop count of this Step
         int mCount0;     // original loop count
 
-        public LogCountStep(AutoOpMode AutoOpMode, String name, int loopCount) {
-            mOpMode = AutoOpMode;
+        public LogCountStep(AutoOpMode opMode, String name, int loopCount) {
+            mOpMode = opMode;
             mName = name;
             mCount = mCount0 = loopCount;
         }
@@ -279,8 +279,8 @@ public class AutoLib {
         String mName;       // name of the output field
         Timer mTimer;       // Timer for this Step
 
-        public LogTimeStep(AutoOpMode AutoOpMode, String name, double seconds) {
-            mOpMode = AutoOpMode;
+        public LogTimeStep(AutoOpMode opMode, String name, double seconds) {
+            mOpMode = opMode;
             mName = name;
             mTimer = new Timer(seconds);
         }
@@ -710,9 +710,9 @@ public class AutoLib {
         private float mDistance;                    // stopping distance
         private ArrayList<SetPower> mSteps;         // motors to stop at given distance
 
-        public DistanceSensorGuideStep(AutoOpMode AutoOpMode, DistanceSensor ds, float distance, ArrayList<SetPower> steps)
+        public DistanceSensorGuideStep(AutoOpMode opMode, DistanceSensor ds, float distance, ArrayList<SetPower> steps)
         {
-            mOpMode = AutoOpMode;
+            mOpMode = opMode;
             mDistanceSensor = ds;
             mDistance = distance;
             mSteps = steps;
@@ -1392,9 +1392,9 @@ public class AutoLib {
         int mMaxSpeed;
         MotorConfigurationType mMotorType;
 
-        public TestMotor(String name, AutoOpMode AutoOpMode) {
+        public TestMotor(String name, AutoOpMode opMode) {
             super();     // init base class (real DcMotor) with dummy data
-            mOpMode = AutoOpMode;
+            mOpMode = opMode;
             mName = name;
             mPower = 0.0;
             mMaxSpeed = 0;
@@ -1517,9 +1517,9 @@ public class AutoLib {
         double mScaleMin;
         double mScaleMax;
 
-        public TestServo(String name, AutoOpMode AutoOpMode) {
+        public TestServo(String name, AutoOpMode opMode) {
             super();     // init base class (real DcMotor) with dummy data
-            mOpMode = AutoOpMode;
+            mOpMode = opMode;
             mName = name;
             mPosition = 0.0;
         }
@@ -1577,9 +1577,9 @@ public class AutoLib {
         AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this gyro
 
-        public TestGyro(String name, AutoOpMode AutoOpMode) {
+        public TestGyro(String name, AutoOpMode opMode) {
             super();
-            mOpMode = AutoOpMode;
+            mOpMode = opMode;
             mName = name;
         }
 
@@ -1602,9 +1602,9 @@ public class AutoLib {
         AutoOpMode mOpMode;     // needed for logging data
         String mName;       // string id of this gyro
 
-        public TestColorSensor(String name, AutoOpMode AutoOpMode) {
+        public TestColorSensor(String name, AutoOpMode opMode) {
             super();
-            mOpMode = AutoOpMode;
+            mOpMode = opMode;
             mName = name;
         }
 
@@ -1678,8 +1678,8 @@ public class AutoLib {
     static public class TestHardwareFactory implements HardwareFactory {
         AutoOpMode mOpMode;     // needed for logging data
 
-        public TestHardwareFactory(AutoOpMode AutoOpMode) {
-            mOpMode = AutoOpMode;
+        public TestHardwareFactory(AutoOpMode opMode) {
+            mOpMode = opMode;
         }
 
         public DcMotor getDcMotor(String name){
@@ -1707,8 +1707,8 @@ public class AutoLib {
     static public class RealHardwareFactory implements HardwareFactory {
         AutoOpMode mOpMode;     // needed for access to hardwareMap
 
-        public RealHardwareFactory(AutoOpMode AutoOpMode) {
-            mOpMode = AutoOpMode;
+        public RealHardwareFactory(AutoOpMode opMode) {
+            mOpMode = opMode;
         }
 
         public DcMotor getDcMotor(String name){

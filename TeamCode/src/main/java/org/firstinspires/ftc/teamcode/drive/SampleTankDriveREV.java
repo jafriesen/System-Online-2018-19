@@ -36,9 +36,6 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "br");
         DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "fr");
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
         leftMotors = Arrays.asList(leftFront, leftRear);
         rightMotors = Arrays.asList(rightFront, rightRear);
@@ -52,6 +49,8 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
