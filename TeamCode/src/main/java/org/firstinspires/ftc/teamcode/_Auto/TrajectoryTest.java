@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 
-@Autonomous(name="Trajectory Test", group="Autonomous")
+@Autonomous(name="Trajectory Test", group="Test")
 public class TrajectoryTest extends AutoOpMode {
     Trajectory mTrajectory;
     SampleTankDriveREV mDrive;
@@ -24,7 +24,7 @@ public class TrajectoryTest extends AutoOpMode {
 
         // change these constraints to something reasonable for your drive
         mTrajectory = mDrive.trajectoryBuilder()
-                .splineTo(new Pose2d(13, 12, 0))
+                .splineTo(new Pose2d(12, 12, 0))
                 .waitFor(1)
                 .splineTo(new Pose2d(0, 0, 0))
                 .build();

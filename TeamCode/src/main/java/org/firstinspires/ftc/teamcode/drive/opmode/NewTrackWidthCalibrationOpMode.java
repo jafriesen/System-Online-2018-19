@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
  * averaged over those runs.
  */
 @Config
-@Autonomous
+@Autonomous(name="NewTrackWidthCalibrationOpMode", group="RR")
 public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
     public static int CIRCUMFERENTIAL_DISTANCE = 500;
     public static int NUM_TRIALS = 5;

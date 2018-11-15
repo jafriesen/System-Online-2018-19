@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
+import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode._Libs.VuforiaLib_RoverRuckus;
 
 public class SampleStep extends AutoLib.Step {
@@ -14,13 +15,22 @@ public class SampleStep extends AutoLib.Step {
     OpMode opMode;
     int cubePositionCount[], cubePosition;
     AutoLib.Timer mTimer;
+    int trajectoryNumber;
+    boolean save;
 
-    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode){
-
+    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode) {
         this.mVLib = mVLib;
         this.opMode = opMode;
-        cubePositionCount = new int[0];
+        this.cubePositionCount = new int[0];
+        this.save = false;
+    }
 
+    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode, int trajectoryNumber){
+        this.mVLib = mVLib;
+        this.opMode = opMode;
+        this.trajectoryNumber = trajectoryNumber;
+        this.cubePositionCount = new int[0];
+        this.save = true;
     }
 
     @Override
@@ -60,7 +70,8 @@ public class SampleStep extends AutoLib.Step {
 
             opMode.telemetry.addData("Cube X", cubePosition);
 
-            if(mTimer.done()) {
+            if(mTimer.done() && save) {
+                trajectoryNumber = cubePosition;
                 return true;
             }
         }

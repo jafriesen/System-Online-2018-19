@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 
-@Autonomous(name="Claim Auto", group="Autonomous")
+@Autonomous(name="Claim Auto", group="Auto")
 public class Auto extends AutoOpMode {
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;

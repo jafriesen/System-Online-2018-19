@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous
+@Autonomous(name="SplineTestOpMode", group="RR")
 public class SplineTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

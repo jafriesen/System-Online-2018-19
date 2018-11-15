@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 @Config
 @Deprecated
 @Disabled
-@Autonomous
+@Autonomous(name="TrackWidthCalibrationOpMode", group="RR")
 public class TrackWidthCalibrationOpMode extends LinearOpMode {
     public static int TOTAL_REVOLUTIONS = 10;
     public static double POWER = 0.3;

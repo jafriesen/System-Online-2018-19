@@ -12,6 +12,7 @@ public class AutoOpMode extends OpMode {
     public boolean bDone;                          // true when the programmed sequence is done
     public FtcDashboard mDashboard = FtcDashboard.getInstance();
     public AutoLib.HardwareFactory mHardwareFactory;
+    public VuforiaLib_RoverRuckus mVlib;
 
     @Override
     public void init() {
@@ -19,6 +20,10 @@ public class AutoOpMode extends OpMode {
 
         // create the root Sequence for this autonomous OpMode
         mSequence = new AutoLib.LinearSequence();
+
+        mVlib = new VuforiaLib_RoverRuckus();
+        mVlib.init(this, null);
+
         setup();
 
         // start out not-done
@@ -38,7 +43,13 @@ public class AutoOpMode extends OpMode {
 
     @Override
     public void stop() {
+        mVlib.stop();
         super.stop();
+    }
+
+    @Override
+    public void start(){
+        mVlib.start();
     }
 
     public void setup() {}

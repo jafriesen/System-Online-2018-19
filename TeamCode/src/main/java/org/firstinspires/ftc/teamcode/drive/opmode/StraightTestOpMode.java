@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
  * This is a simple routine to test translational drive capabilities. If this is *consistently*
  * overshooting or undershooting by a significant amount, check the constants in the drive class.
  */
-@Autonomous
+@Autonomous(name="StraightTestOpMode", group="RR")
 public class StraightTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
