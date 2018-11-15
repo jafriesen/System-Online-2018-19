@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode._Auto;
+package org.firstinspires.ftc.teamcode._Auto.Steps;
 
 
 import android.graphics.Bitmap;
@@ -12,13 +12,14 @@ public class SampleStep extends AutoLib.Step {
 
     VuforiaLib_RoverRuckus mVLib;
     OpMode opMode;
-    int cubePosition;
+    int cubePositionCount[], cubePosition;
+    AutoLib.Timer mTimer;
 
     public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode){
 
         this.mVLib = mVLib;
         this.opMode = opMode;
-        cubePosition = 0;
+        cubePositionCount = new int[0];
 
     }
 
@@ -28,22 +29,40 @@ public class SampleStep extends AutoLib.Step {
         int bmArray[] = new int[bmIn.getWidth()*bmIn.getWidth()];
         int bmOutArray[] = new int[bmIn.getWidth()*bmIn.getHeight()];
         int cubeX = 0;
+
+        if(firstLoopCall()) {
+            mTimer = new AutoLib.Timer(1);
+            mTimer.start();
+        }
+
         if (bmIn != null) {
             // create the output bitmap we'll display on the RC phone screen
             bmIn.getPixels(bmArray, 0, bmIn.getWidth(), 0, 0, bmIn.getWidth(), bmIn.getHeight());
             convertToSimpleColorRaster(bmArray, bmOutArray, bmIn.getHeight(), bmIn.getWidth(), bmIn.getWidth());
             cubeX = findCube(bmOutArray, bmIn.getHeight(), bmIn.getWidth());
             if (cubeX < bmIn.getWidth() / 3) {
-                cubePosition = 1;
+                cubePositionCount[0]++;
             } else if (cubeX > bmIn.getWidth() * 2 / 3) {
-                cubePosition = 3;
+                cubePositionCount[1]++;
             } else {
-                cubePosition = 2;
+                cubePositionCount[2]++;
             }
 
+            if(cubePositionCount[0] > cubePositionCount[1] && cubePositionCount[0] > cubePositionCount[2]) {
+                cubePosition = 1;
+            }
+            else if(cubePositionCount[1] > cubePositionCount[0] && cubePositionCount[1] > cubePositionCount[2]) {
+                cubePosition = 1;
+            }
+            else {
+                cubePosition = 3;
+            }
 
             opMode.telemetry.addData("Cube X", cubePosition);
 
+            if(mTimer.done()) {
+                return true;
+            }
         }
         return super.loop();
     }

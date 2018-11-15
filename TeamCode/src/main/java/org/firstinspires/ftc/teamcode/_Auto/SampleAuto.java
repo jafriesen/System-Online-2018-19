@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode._Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
-import org.firstinspires.ftc.teamcode._Auto.SampleStep;
+import org.firstinspires.ftc.teamcode._Auto.Steps.SampleStep;
 import org.firstinspires.ftc.teamcode._Libs.VuforiaLib_RoverRuckus;
 
 @Autonomous(name="Sample Auto", group="Autonomous")
