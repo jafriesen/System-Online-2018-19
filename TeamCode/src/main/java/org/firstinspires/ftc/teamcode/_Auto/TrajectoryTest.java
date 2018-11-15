@@ -24,15 +24,11 @@ public class TrajectoryTest extends AutoOpMode {
 
         // change these constraints to something reasonable for your drive
         mTrajectory = mDrive.trajectoryBuilder()
-                .turnTo(Math.PI)
-                .waitFor(2)
-                .turnTo(0)
-                .waitFor(2)
-                .lineTo(new Vector2d(60, 0))
-                .waitFor(2)
-                .splineTo(new Pose2d(0, 40, 0))
+                .splineTo(new Pose2d(13, 12, 0))
+                .waitFor(1)
+                .splineTo(new Pose2d(0, 0, 0))
                 .build();
 
-        //mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(mDrive, mDashboard, mTrajectory));
+        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(mDrive, mDashboard, mTrajectory));
     }
 }
