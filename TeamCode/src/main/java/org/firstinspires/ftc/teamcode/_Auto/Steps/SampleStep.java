@@ -15,8 +15,8 @@ public class SampleStep extends AutoLib.Step {
     OpMode opMode;
     int cubePositionCount[], cubePosition;
     AutoLib.Timer mTimer;
-    int trajectoryNumber;
     boolean save;
+    AutoLib.Data data;
 
     public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode) {
         this.mVLib = mVLib;
@@ -25,10 +25,10 @@ public class SampleStep extends AutoLib.Step {
         this.save = false;
     }
 
-    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode, int trajectoryNumber){
+    public SampleStep(VuforiaLib_RoverRuckus vLib, OpMode opMode, AutoLib.Data data){
         this.mVLib = mVLib;
         this.opMode = opMode;
-        this.trajectoryNumber = trajectoryNumber;
+        this.data = data;
         this.cubePositionCount = new int[0];
         this.save = true;
     }
@@ -71,7 +71,7 @@ public class SampleStep extends AutoLib.Step {
             opMode.telemetry.addData("Cube X", cubePosition);
 
             if(mTimer.done() && save) {
-                trajectoryNumber = cubePosition;
+                data.Float = cubePosition;
                 return true;
             }
         }

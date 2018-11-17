@@ -18,6 +18,8 @@ public class AutoOpMode extends OpMode {
     public void init() {
         mHardwareFactory = new AutoLib.RealHardwareFactory(this);
 
+        mDashboard = FtcDashboard.getInstance();
+
         // create the root Sequence for this autonomous OpMode
         mSequence = new AutoLib.LinearSequence();
 

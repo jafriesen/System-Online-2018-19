@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode._Auto;
+package org.firstinspires.ftc.teamcode._Auto.SuperSimpleAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.AutoOpMode;
 
-@Autonomous(name="Latch Auto", group="Auto")
-public class Auto2 extends AutoOpMode {
+@Autonomous(name="Iffy Latch Auto", group="SimpleAuto")
+public class IffyLandAuto extends AutoOpMode {
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;

@@ -8,19 +8,27 @@ import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 public class RoadRunnerImplementer {
     static public class Follow2dTrajectory extends AutoLib.Step {
         TankPIDVAFollower mFollower;
-        Trajectory mTrajectory;
-        SampleTankDriveREV mDrive;
+        Trajectory mTrajectory, mPossibleTrajectories[];
+        SampleTankDriveREVOptimized mDrive;
         FtcDashboard mDashboard;
+        AutoLib.Data mData;
 
-        public Follow2dTrajectory(SampleTankDriveREV drive, FtcDashboard dashboard, Trajectory trajectory) {
+        public Follow2dTrajectory(SampleTankDriveREVOptimized drive, FtcDashboard dashboard, Trajectory trajectory) {
             mDashboard = dashboard;
             mDrive = drive;
             mTrajectory = trajectory;
+        }
+
+        public Follow2dTrajectory(SampleTankDriveREVOptimized drive, FtcDashboard dashboard, Trajectory trajectory[], AutoLib.Data data) {
+            mDashboard = dashboard;
+            mDrive = drive;
+            mPossibleTrajectories = trajectory;
         }
 
         public boolean loop()
@@ -28,6 +36,7 @@ public class RoadRunnerImplementer {
             super.loop();
 
             if(firstLoopCall()) {
+
                 mDrive.followTrajectory(mTrajectory);
             }
 

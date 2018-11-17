@@ -46,7 +46,7 @@ public class LiftTankDrive extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    DcMotor motorLift;
+    DcMotor motorLift1, motorLift2;
 
 
     float power = 0;
@@ -62,7 +62,8 @@ public class LiftTankDrive extends OpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("fl");
         motorBackRight = hardwareMap.dcMotor.get("br");
         motorBackLeft = hardwareMap.dcMotor.get("bl");
-        motorLift = hardwareMap.dcMotor.get("lift");
+        motorLift1 = hardwareMap.dcMotor.get("l1");
+        motorLift2 = hardwareMap.dcMotor.get("l2");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -72,11 +73,17 @@ public class LiftTankDrive extends OpMode {
         motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        motorLift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLift2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         motorFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         lowPowerLift = false;
     }
@@ -142,6 +149,8 @@ public class LiftTankDrive extends OpMode {
         }else{
             telemetry.addData("Low Power Lift", "Off");
         }
+
+        telemetry.addData("Lift Encoder", motorLift.getCurrentPosition());
 
         /*
          * Send telemetry data back to driver station.
