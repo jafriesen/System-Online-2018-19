@@ -135,13 +135,17 @@ public class LiftTankDrive extends OpMode {
         }
 
         if(lowPowerLift) {
-            motorLift.setPower(-0.15);
+            motorLift1.setPower(-0.15);
+            motorLift2.setPower(-0.15);
         } else if(gamepad1.dpad_up){
-            motorLift.setPower(1);
+            motorLift1.setPower(1);
+            motorLift2.setPower(1);
         }else if(gamepad1.dpad_down){
-            motorLift.setPower(-1);
+            motorLift1.setPower(-1);
+            motorLift2.setPower(-1);
         }else{
-            motorLift.setPower(0);
+            motorLift1.setPower(0);
+            motorLift2.setPower(0);
         }
 
         if(lowPowerLift){
@@ -150,7 +154,8 @@ public class LiftTankDrive extends OpMode {
             telemetry.addData("Low Power Lift", "Off");
         }
 
-        telemetry.addData("Lift Encoder", motorLift.getCurrentPosition());
+        telemetry.addData("Lift Encoder 1", motorLift1.getCurrentPosition());
+        telemetry.addData("Lift Encoder 2", motorLift2.getCurrentPosition());
 
         /*
          * Send telemetry data back to driver station.
