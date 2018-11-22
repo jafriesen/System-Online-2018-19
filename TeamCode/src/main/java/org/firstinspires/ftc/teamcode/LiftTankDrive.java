@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -46,6 +47,7 @@ public class LiftTankDrive extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
+    Servo intake;
     DcMotor motorLift1, motorLift2;
 
 
@@ -65,25 +67,23 @@ public class LiftTankDrive extends OpMode {
         motorLift1 = hardwareMap.dcMotor.get("l1");
         motorLift2 = hardwareMap.dcMotor.get("l2");
 
+        intake = hardwareMap.servo.get("intake");
+
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        motorLift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLift2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         motorFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorLift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
+        motorLift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lowPowerLift = false;
     }
@@ -104,7 +104,12 @@ public class LiftTankDrive extends OpMode {
         rt = (float)scaleInput(rt);
         lt = (float)scaleInput(lt);
 
-
+        if(gamepad1.a) {
+            intake.setPosition(0.25);
+        }
+        else if (gamepad1.b) {
+            intake.setPosition(0.0);
+        }
 
         // clip the right/left values so that the values never exceed +/- 1
         left = Range.clip(left, -1, 1);
@@ -116,10 +121,10 @@ public class LiftTankDrive extends OpMode {
         // write the values to the motors
         boolean slowMode = gamepad1.left_bumper;
         if(slowMode) {
-            motorFrontRight.setPower(right/2);
-            motorBackRight.setPower(right/2);
-            motorFrontLeft.setPower(left/2);
-            motorBackLeft.setPower(left/2);
+            motorFrontRight.setPower(right/4);
+            motorBackRight.setPower(right/4);
+            motorFrontLeft.setPower(left/4);
+            motorBackLeft.setPower(left/4);
         }
         else {
             motorFrontRight.setPower(right);
@@ -137,10 +142,10 @@ public class LiftTankDrive extends OpMode {
         if(lowPowerLift) {
             motorLift1.setPower(-0.15);
             motorLift2.setPower(-0.15);
-        } else if(gamepad1.dpad_up){
+        } else if(gamepad1.dpad_down){
             motorLift1.setPower(1);
             motorLift2.setPower(1);
-        }else if(gamepad1.dpad_down){
+        }else if(gamepad1.dpad_up){
             motorLift1.setPower(-1);
             motorLift2.setPower(-1);
         }else{

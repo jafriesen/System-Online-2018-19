@@ -29,12 +29,12 @@ import java.util.List;
 @Config
 @Autonomous(name="DriveFFTuningOpMode", group="RR")
 public class DriveFFTuningOpMode extends LinearOpMode {
-    public static final double MAX_POWER = 0.7;
+    public static final double MAX_POWER = 1.0;
     public static final double DISTANCE = 100;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
 
         NanoClock clock = NanoClock.system();
 

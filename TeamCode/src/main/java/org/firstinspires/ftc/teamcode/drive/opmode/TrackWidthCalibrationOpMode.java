@@ -23,8 +23,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
  * Note: this routine is *deprecated*; NewTrackWidthCalibrationOpMode is recommended instead.
  */
 @Config
-@Deprecated
-@Disabled
 @Autonomous(name="TrackWidthCalibrationOpMode", group="RR")
 public class TrackWidthCalibrationOpMode extends LinearOpMode {
     public static int TOTAL_REVOLUTIONS = 10;
@@ -33,7 +31,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
         // it's important that the IMU/gyro/heading sensor is not part of the localization
         drive.setLocalizer(new TankDrive.TankLocalizer(drive, false));
 

@@ -43,10 +43,10 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(ExpansionHubMotor.class, "leftFront");
-        leftRear = hardwareMap.get(ExpansionHubMotor.class, "leftRear");
-        rightRear = hardwareMap.get(ExpansionHubMotor.class, "rightRear");
-        rightFront = hardwareMap.get(ExpansionHubMotor.class, "rightFront");
+        leftFront = hardwareMap.get(ExpansionHubMotor.class, "fl");
+        leftRear = hardwareMap.get(ExpansionHubMotor.class, "bl");
+        rightRear = hardwareMap.get(ExpansionHubMotor.class, "br");
+        rightFront = hardwareMap.get(ExpansionHubMotor.class, "fr");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

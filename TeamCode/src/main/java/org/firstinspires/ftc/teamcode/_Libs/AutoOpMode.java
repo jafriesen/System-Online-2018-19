@@ -19,6 +19,7 @@ public class AutoOpMode extends OpMode {
         mHardwareFactory = new AutoLib.RealHardwareFactory(this);
 
         mDashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
 
         // create the root Sequence for this autonomous OpMode
         mSequence = new AutoLib.LinearSequence();
@@ -40,6 +41,7 @@ public class AutoOpMode extends OpMode {
         else
             packet.put("sequence finished", "");
 
+        packet.put("packet", 1);
         mDashboard.sendTelemetryPacket(packet);
     }
 

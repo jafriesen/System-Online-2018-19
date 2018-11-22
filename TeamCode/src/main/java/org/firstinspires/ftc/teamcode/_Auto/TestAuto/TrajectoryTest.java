@@ -14,20 +14,23 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 @Autonomous(name="Trajectory Test", group="Test")
 public class TrajectoryTest extends AutoOpMode {
     Trajectory mTrajectory;
-    SampleTankDriveREVOptimized mDrive;
+    SampleTankDriveREV mDrive;
     FtcDashboard mDashboard;
+
+    public TrajectoryTest() {
+        msStuckDetectInit = 10000;
+        msStuckDetectInitLoop = 10000;
+    }
 
     @Override
     public void setup() {
-        mDrive = new SampleTankDriveREVOptimized(hardwareMap);
+        mDrive = new SampleTankDriveREV(hardwareMap);
 
         // change these constraints to something reasonable for your drive
         mTrajectory = mDrive.trajectoryBuilder()
-                .splineTo(new Pose2d(12, 12, 0))
-                .waitFor(1)
-                .splineTo(new Pose2d(0, 0, 0))
+                .forward(10)
                 .build();
 
-        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(mDrive, mDashboard, mTrajectory));
+        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, mDrive, mTrajectory));
     }
 }

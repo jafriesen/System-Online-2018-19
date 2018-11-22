@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode._Libs;
 
 import android.support.annotation.ColorInt;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -328,6 +329,10 @@ public class AutoLib {
             mPower = power;
         }
 
+        public void setTime(double time) {
+            mTimer = new Timer(time);
+        }
+
         public boolean loop() {
             super.loop();
 
@@ -335,7 +340,11 @@ public class AutoLib {
             if (firstLoopCall()) {
                 mTimer.start();
                 mMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                mMotor.setPower(mPower);
+                if(mTimer.remaining() > 0.00001) {
+                    mMotor.setPower(mPower);
+                }
+                else
+                    return true;
             }
 
             // run the motor at the requested power until the Timer runs out
@@ -367,6 +376,10 @@ public class AutoLib {
         // for dynamic adjustment of power during the Step
         public void setPower(double power) {
             mPower = power;
+        }
+
+        public void setEncoderCount(int position) {
+            mEncoderCount = position;
         }
 
         public boolean loop() {
@@ -478,7 +491,7 @@ public class AutoLib {
 
     static public class Data {
         public float Float;
-        Data() {
+        public Data() {
             Float = 0;
         }
     }
@@ -564,12 +577,12 @@ public class AutoLib {
         private float mMaxPower = 1.0f;                     // maximum power for any motor
         private float mHeading;                             // compass heading to steer for (-180 .. +180 degrees)
         private AutoOpMode mOpMode;                             // needed so we can log output (may be null)
-        private HeadingSensor mGyro;                        // sensor to use for heading information (e.g. Gyro or Vuforia)
+        private BNO055IMU mGyro;                        // sensor to use for heading information (e.g. Gyro or Vuforia)
         private SensorLib.PID mPid;                         // proportional–integral–derivative controller (PID controller)
         private double mPrevTime;                           // time of previous loop() call
         private ArrayList<SetPower> mMotorSteps;            // the motor steps we're guiding - assumed order is right ... left ...
 
-        public GyroGuideStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public GyroGuideStep(AutoOpMode mode, float heading, BNO055IMU gyro, SensorLib.PID pid,
                              ArrayList<SetPower> motorsteps, float power) {
             mOpMode = mode;
             mHeading = heading;
@@ -592,7 +605,7 @@ public class AutoLib {
                 mPrevTime = mOpMode.getRuntime();           // use timer provided by AutoOpMode
             }
 
-            float heading = mGyro.getHeading();     // get latest reading from direction sensor
+            float heading = mGyro.getAngularOrientation().firstAngle;     // get latest reading from direction sensor
             // convention is positive angles CCW, wrapping from 359-0
 
             float error = SensorLib.Utils.wrapAngle(heading-mHeading);   // deviation from desired heading
@@ -627,6 +640,8 @@ public class AutoLib {
                 mOpMode.packet.put("heading ", heading);
                 mOpMode.packet.put("left power ", leftPower);
                 mOpMode.packet.put("right power ", rightPower);
+
+                mOpMode.telemetry.addData("heading", heading);
             }
 
             // guidance step always returns "done" so the CS in which it is embedded completes when
@@ -680,11 +695,11 @@ public class AutoLib {
 
     // a Step that returns true if the given HeadingSensor reports a heading within some tolerance of a desired heading.
     static public class GyroTestHeadingStep extends Step {
-        private HeadingSensor mSensor;
+        private BNO055IMU mSensor;
         private double mHeading;
         private double mTolerance;
 
-        public GyroTestHeadingStep(HeadingSensor sensor, double heading, double tol){
+        public GyroTestHeadingStep(BNO055IMU sensor, double heading, double tol){
             mSensor = sensor;
             mHeading = heading;
             mTolerance = tol;
@@ -693,10 +708,7 @@ public class AutoLib {
         public boolean loop() {
             super.loop();
 
-            if (mSensor.haveHeading())
-                return (Math.abs(mSensor.getHeading()-mHeading) < mTolerance);
-            else
-                return false;
+            return (Math.abs(mSensor.getAngularOrientation().firstAngle-mHeading) < mTolerance);
         }
 
         void set(float heading) {
@@ -781,7 +793,7 @@ public class AutoLib {
         AutoLib.GyroGuideStep guideStep;
         GyroTestHeadingStep testStep;
 
-        public GyroRotateStep(AutoOpMode mode, DcMotor[] motors, float maxPower, HeadingSensor gyro, SensorLib.PID pid, float heading, float tolerance) {
+        public GyroRotateStep(AutoOpMode mode, DcMotor[] motors, float maxPower, BNO055IMU gyro, SensorLib.PID pid, float heading, float tolerance) {
             // add a concurrent Step to control each motor
             ArrayList<AutoLib.SetPower> steps = new ArrayList<AutoLib.SetPower>();
             for (DcMotor em : motors)
@@ -933,7 +945,7 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthTimedDriveStep extends ConcurrentSequence {
 
-        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, BNO055IMU gyro, SensorLib.PID pid,
                                      DcMotor motors[], float power, float time, boolean stop)
         {
             // add a concurrent Step to control each motor
@@ -951,7 +963,7 @@ public class AutoLib {
 
         }
 
-        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthTimedDriveStep(AutoOpMode mode, float heading, BNO055IMU gyro, SensorLib.PID pid,
                                      DcMotorEx motors[], float power, float time, boolean stop)
         {
             // add a concurrent Step to control each motor
@@ -984,7 +996,7 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthCountedDriveStep extends ConcurrentSequence {
 
-        public AzimuthCountedDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthCountedDriveStep(AutoOpMode mode, float heading, BNO055IMU gyro, SensorLib.PID pid,
                                        DcMotor motors[], float power, int count, boolean stop)
         {
             // add a concurrent Step to control each motor
@@ -1018,7 +1030,7 @@ public class AutoLib {
     // assumes a robot with up to 4 drive motors in assumed order right motors, left motors
     static public class AzimuthDistanceDriveStep extends ConcurrentSequence {
 
-        public AzimuthDistanceDriveStep(AutoOpMode mode, float heading, HeadingSensor gyro, SensorLib.PID pid,
+        public AzimuthDistanceDriveStep(AutoOpMode mode, float heading, BNO055IMU gyro, SensorLib.PID pid,
                                         DcMotor motors[], float power, DistanceSensor ds, float distance)
         {
             // add a concurrent Step to control each motor
@@ -1176,19 +1188,27 @@ public class AutoLib {
 
     // a Sequence that turns an up-to-four-motor robot by applying the given right and left powers for given time
     static public class TurnByTimeStep extends ConcurrentSequence {
+        TimedMotorStep motorStep[];
 
         public TurnByTimeStep(DcMotor fr, DcMotor br, DcMotor fl, DcMotor bl, double rightPower, double leftPower, double seconds, boolean stop)
         {
+            motorStep = new TimedMotorStep[4];
             if (fr != null)
-                this.add(new TimedMotorStep(fr, rightPower, seconds, stop));
+                this.add(motorStep[0] = new TimedMotorStep(fr, rightPower, seconds, stop));
             if (br != null)
-                this.add(new TimedMotorStep(br, rightPower, seconds, stop));
+                this.add(motorStep[1] = new TimedMotorStep(br, rightPower, seconds, stop));
             if (fl != null)
-                this.add(new TimedMotorStep(fl, leftPower, seconds, stop));
+                this.add(motorStep[2] = new TimedMotorStep(fl, leftPower, seconds, stop));
             if (bl != null)
-                this.add(new TimedMotorStep(bl, leftPower, seconds, stop));
+                this.add(motorStep[3] = new TimedMotorStep(bl, leftPower, seconds, stop));
         }
 
+        public void set(float leftPosition, float rightPosition) {
+            motorStep[0].setPower(rightPosition);
+            motorStep[1].setPower(rightPosition);
+            motorStep[2].setPower(leftPosition);
+            motorStep[3].setPower(leftPosition);
+        }
     }
 
 
@@ -1224,17 +1244,27 @@ public class AutoLib {
 
     // a Sequence that turns an up-to-four-motor robot by applying the given right and left powers for given right and left encoder counts
     static public class TurnByEncoderStep extends ConcurrentSequence {
+        RunToPositionMotorStep positionStep[];
+
 
         public TurnByEncoderStep(DcMotor fr, DcMotor br, DcMotor fl, DcMotor bl, double rightPower, double leftPower, int rightCount, int leftCount, boolean stop)
         {
+            positionStep = new RunToPositionMotorStep[4];
             if (fr != null)
-                this.add(new RunToPositionMotorStep(fr, rightPower, rightCount, stop));
+                this.add(positionStep[0] = new RunToPositionMotorStep(fr, rightPower, rightCount, stop));
             if (br != null)
-                this.add(new RunToPositionMotorStep(br, rightPower, rightCount, stop));
+                this.add(positionStep[1] = new RunToPositionMotorStep(br, rightPower, rightCount, stop));
             if (fl != null)
-                this.add(new RunToPositionMotorStep(fl, leftPower, leftCount, stop));
+                this.add(positionStep[2] = new RunToPositionMotorStep(fl, leftPower, leftCount, stop));
             if (bl != null)
-                this.add(new RunToPositionMotorStep(bl, leftPower, leftCount, stop));
+                this.add(positionStep[3] = new RunToPositionMotorStep(bl, leftPower, leftCount, stop));
+        }
+
+        public void set(int leftPosition, int rightPosition) {
+            positionStep[0].setEncoderCount(rightPosition);
+            positionStep[1].setEncoderCount(rightPosition);
+            positionStep[2].setEncoderCount(leftPosition);
+            positionStep[3].setEncoderCount(leftPosition);
         }
 
     }

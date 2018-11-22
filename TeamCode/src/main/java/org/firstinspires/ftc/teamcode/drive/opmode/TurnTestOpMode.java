@@ -22,7 +22,7 @@ public class TurnTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        SampleTankDriveREVOptimized drive = new SampleTankDriveREVOptimized(hardwareMap);
+        SampleTankDriveREV drive = new SampleTankDriveREV(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
                 .turnTo(Math.PI / 2)
