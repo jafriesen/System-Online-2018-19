@@ -94,14 +94,27 @@ public class CraterAuto extends AutoOpMode {
 
         pid = new SensorLib.PID((float) Kp, (float) Ki, (float) Kd, (float) KiCutoff);
 
-        samplePath1 = new AutoLib.Step[5];
-
+        samplePath1 = new AutoLib.Step[6];
         samplePath1[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
         samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
         samplePath1[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle2, (float) AngleTolerance);
         samplePath1[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance3).build());
-        samplePath1[4] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
+        samplePath1[4] = new AutoLib.ServoStep(claimServo, 0.0);
+        samplePath1[5] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
 
+        samplePath2 = new AutoLib.Step[4];
+        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(30).build());
+        samplePath2[1] = new AutoLib.ServoStep(claimServo, 0.0);
+
+        samplePath3 = new AutoLib.Step[6];
+        samplePath3[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
+        samplePath3[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
+        samplePath3[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle2, (float) AngleTolerance);
+        samplePath3[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance3).build());
+        samplePath3[4] = new AutoLib.ServoStep(claimServo, 0.0);
+        samplePath3[5] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
+
+        mSequence.add(new SampleStep(mVlib, this, data));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
         mSequence.add(new DoStepsStep(samplePath1));
 

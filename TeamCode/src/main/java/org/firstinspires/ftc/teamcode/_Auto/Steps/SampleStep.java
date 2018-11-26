@@ -15,27 +15,23 @@ public class SampleStep extends AutoLib.Step {
     OpMode opMode;
     int cubePositionCount[], cubePosition;
     AutoLib.Timer mTimer;
-    boolean save, turn;
+    boolean save;
     AutoLib.Data data;
-    RoadRunnerImplementer.Follow2dTrajectory turnStep;
 
     public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode) {
         this.mVLib = mVLib;
         this.opMode = opMode;
         this.cubePositionCount = new int[3];
         this.save = false;
-        mTimer = new AutoLib.Timer(1.0);
     }
 
-    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode, AutoLib.Data data, RoadRunnerImplementer.Follow2dTrajectory turnStep){
+    public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode, AutoLib.Data data){
         this.mVLib = mVLib;
         this.opMode = opMode;
         this.data = data;
         this.cubePositionCount = new int[3];
         this.save = true;
         mTimer = new AutoLib.Timer(1.0);
-        this.turnStep = turnStep;
-        turn = false;
     }
 
     @Override
@@ -45,12 +41,9 @@ public class SampleStep extends AutoLib.Step {
         int bmOutArray[] = new int[bmIn.getWidth()*bmIn.getHeight()];
         int cubeX = 0;
 
-        if(firstLoopCall()) {
+        if(firstLoopCall() && mTimer != null) {
             mTimer.start();
-
         }
-
-        opMode.telemetry.addData("Time", mTimer.elapsed());
 
         if (bmIn != null) {
             // create the output bitmap we'll display on the RC phone screen
@@ -77,22 +70,10 @@ public class SampleStep extends AutoLib.Step {
 
             opMode.telemetry.addData("Cube X", cubePosition);
 
-            if(mTimer.done() && save) {
+            if(mTimer != null && mTimer.done() && save) {
                 data.Float = cubePosition;
-                float right, left;
-                if(cubePosition == 1) {
-
-                }else if(cubePosition == 2) {
-
-                }else {
-
-                }
-                //turnStep.setTrajectory(left, right);
-                turn = true;
+                return true;
             }
-        }
-        if(turn) {
-            return turnStep.loop();
         }
         return super.loop();
     }
