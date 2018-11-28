@@ -9,27 +9,30 @@ import org.firstinspires.ftc.teamcode._Libs.HeadingSensor;
 import org.firstinspires.ftc.teamcode._Libs.SensorLib;
 
 public class ChoosePathStep extends AutoLib.Step {
-    AutoLib.Step steps[];
-    int stepTotal, currentStep;
+    AutoLib.Step path1[], path2[], path3[];
+    DoStepsStep stepStep;
+    AutoLib.Data data;
 
-    public ChoosePathStep(AutoLib.Step steps[])
+    public ChoosePathStep(DoStepsStep stepStep, AutoLib.Step path1[], AutoLib.Step path2[], AutoLib.Step path3[], AutoLib.Data data)
     {
-        this.steps = steps;
-        this.stepTotal = steps.length-1;
-        this.currentStep = 0;
-    }
-
-    public void setSteps(AutoLib.Step steps[]) {
-        this.steps = steps;
-        this.stepTotal = steps.length-1;
-        this.currentStep = 0;
+        this.stepStep = stepStep;
+        this.path1 = path1;
+        this.path2 = path2;
+        this.path3 = path3;
+        this.data = data;
     }
 
     @Override
     public boolean loop() {
-        if(steps[currentStep].loop()) {
-            currentStep++;
+        if(data.Float == 1) {
+            stepStep.setSteps(path1);
         }
-        return currentStep > stepTotal;
+        else if(data.Float == 3) {
+            stepStep.setSteps(path3);
+        }
+        else {
+            stepStep.setSteps(path2);
+        }
+        return true;
     }
 }
