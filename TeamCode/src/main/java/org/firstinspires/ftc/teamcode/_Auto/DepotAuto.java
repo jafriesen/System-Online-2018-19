@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 
-@Autonomous(name="FULL Depot Auto", group="FullAuto")
+@Autonomous(name="FULL Crater Auto", group="FullAuto")
 public class DepotAuto extends AutoOpMode {
 
     private SampleTankDriveREV drive;

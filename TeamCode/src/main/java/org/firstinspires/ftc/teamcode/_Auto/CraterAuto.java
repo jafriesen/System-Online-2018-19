@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode._Libs.SensorLib;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 @Config
-@Autonomous(name="FULL Crater Auto", group="FullAuto")
+@Autonomous(name="FULL Depot Auto", group="FullAuto")
 public class CraterAuto extends AutoOpMode {
 
     private SampleTankDriveREV drive;
