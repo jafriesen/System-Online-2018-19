@@ -146,9 +146,9 @@ public class PosterizeTestOp extends OpMode {
                 double Y = red *  .299000 + green *  .587000 + blue *  .114000;
                 double U  = red * -.168736 + green * -.331264 + blue *  .500000 + 128;
                 double V = red *  .500000 + green * -.418688 + blue * -.081312 + 128;
-                if(r < 2 * nrows / 3){
+                if(r <  nrows / 2){
                     simple[ncols*r+c] = 0xFF000000;
-                }else if(red > 2.25*blue && green > 1.75*blue){
+                }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
                     simple[r*ncols+c] = 0xFFFFFF00;
                 }else {
                     simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;

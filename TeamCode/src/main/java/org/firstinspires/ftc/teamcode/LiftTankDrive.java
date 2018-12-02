@@ -142,10 +142,10 @@ public class LiftTankDrive extends OpMode {
         if(lowPowerLift) {
             motorLift1.setPower(-0.15);
             motorLift2.setPower(-0.15);
-        } else if(gamepad1.dpad_down){
+        } else if(gamepad1.dpad_up){
             motorLift1.setPower(1);
             motorLift2.setPower(1);
-        }else if(gamepad1.dpad_up){
+        }else if(gamepad1.dpad_down){
             motorLift1.setPower(-1);
             motorLift2.setPower(-1);
         }else{

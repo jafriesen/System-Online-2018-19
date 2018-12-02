@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 public class UnlatchStep extends AutoLib.Step {
     DcMotor mEncoderMotor, mOtherMotor;    // motor to control
     double mPower;          // power level to use
-    int mEncoderCount;      // target encoder count
+    float mEncoderCount;      // target encoder count
     OpMode opMode;
     boolean mStop;          // stop motor when count is reached
     AutoLib.Timer mTimer;
 
-    public UnlatchStep(OpMode opMode, DcMotor encoderMotor, DcMotor otherMotor, double power, int count) {
+    public UnlatchStep(OpMode opMode, DcMotor encoderMotor, DcMotor otherMotor, double power, float count) {
         mEncoderMotor = encoderMotor;
         mOtherMotor = otherMotor;
         mPower = power;
@@ -30,7 +30,7 @@ public class UnlatchStep extends AutoLib.Step {
         boolean done = false;
 
         if(firstLoopCall()) {
-            mTimer = new AutoLib.Timer(1.6);
+            mTimer = new AutoLib.Timer(1.5);
             mTimer.start();
         }
 

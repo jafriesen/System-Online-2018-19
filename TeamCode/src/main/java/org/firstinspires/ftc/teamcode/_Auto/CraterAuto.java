@@ -1,14 +1,23 @@
 package org.firstinspires.ftc.teamcode._Auto;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode._Auto.Steps.ChoosePathStep;
 import org.firstinspires.ftc.teamcode._Auto.Steps.DoStepsStep;
 import org.firstinspires.ftc.teamcode._Auto.Steps.SampleStep;
 import org.firstinspires.ftc.teamcode._Auto.Steps.UnlatchStep;
@@ -18,8 +27,9 @@ import org.firstinspires.ftc.teamcode._Libs.HeadingSensor;
 import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode._Libs.SensorLib;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
-@Config
-@Autonomous(name="FULL Depot Auto", group="FullAuto")
+import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
+
+@Autonomous(name="FULL Crater Auto", group="FullAuto")
 public class CraterAuto extends AutoOpMode {
 
     private SampleTankDriveREV drive;
@@ -29,6 +39,7 @@ public class CraterAuto extends AutoOpMode {
     private AutoLib.Data data;
     private BNO055IMU gyro;
     private AutoLib.Step samplePath1[], samplePath2[], samplePath3[];
+    private DoStepsStep doStepStep;
     private SensorLib.PID pid;
 
     // parameters of the PID controller for this sequence
@@ -42,7 +53,7 @@ public class CraterAuto extends AutoOpMode {
     public static double Angle1 = 45;
     public static double Distance3 = 20;
     public static double Angle2 = -45;
-    public static double Distance4 = 75;
+    public static double Distance4 = 65;
     public static double MaxPower = 0.5;
     public static double AngleTolerance = 1.0;
 
@@ -94,29 +105,25 @@ public class CraterAuto extends AutoOpMode {
 
         pid = new SensorLib.PID((float) Kp, (float) Ki, (float) Kd, (float) KiCutoff);
 
-        samplePath1 = new AutoLib.Step[6];
+        samplePath1 = new AutoLib.Step[2];
         samplePath1[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
         samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath1[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle2, (float) AngleTolerance);
-        samplePath1[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance3).build());
-        samplePath1[4] = new AutoLib.ServoStep(claimServo, 0.0);
-        samplePath1[5] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
 
-        samplePath2 = new AutoLib.Step[4];
-        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(30).build());
-        samplePath2[1] = new AutoLib.ServoStep(claimServo, 0.0);
+        samplePath2 = new AutoLib.Step[1];
+        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(15).build());
 
-        samplePath3 = new AutoLib.Step[6];
+        samplePath3 = new AutoLib.Step[2];
         samplePath3[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
         samplePath3[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath3[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle2, (float) AngleTolerance);
-        samplePath3[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance3).build());
-        samplePath3[4] = new AutoLib.ServoStep(claimServo, 0.0);
-        samplePath3[5] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
 
+        doStepStep = new DoStepsStep(samplePath2);
+
+        mSequence.add(new UnlatchStep(this, hangMotors[1], hangMotors[0], 1.0, 1.8f));
         mSequence.add(new SampleStep(mVlib, this, data));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
-        mSequence.add(new DoStepsStep(samplePath1));
+        mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, -1, 1.4, true)); // lower the lift
+        mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
+        mSequence.add(doStepStep);
 
         /*
         Trajectory leaveHang = drive.trajectoryBuilder()    // drive 5 inches
@@ -131,7 +138,7 @@ public class CraterAuto extends AutoOpMode {
 
         //AutoLib.TurnByTimeStep turnStep = new AutoLib.GyroRotateStep(this, motors, 0.0f, gyro, 0.2,0, 0.5);
 
-        //mSequence.add(new UnlatchStep(this, hangMotors[1], hangMotors[0], -1.0, 3000));
+
         //mSequence.add(new SampleStep(mVlib, this, data, turnStep));   // find the cheddar
         //mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(drive, mDashboard, leaveHang));  // move away from lander
         //mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, 1, 1.5, true)); // lower the lift
