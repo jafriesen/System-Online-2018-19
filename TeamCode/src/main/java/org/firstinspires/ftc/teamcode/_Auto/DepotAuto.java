@@ -104,8 +104,8 @@ public class DepotAuto extends AutoOpMode {
         samplePath1[4] = new AutoLib.ServoStep(claimServo, 1.0);
         samplePath1[5] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance4).build());
 
-        samplePath2 = new AutoLib.Step[4];
-        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(25).build());
+        samplePath2 = new AutoLib.Step[2];
+        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(15).build());
         samplePath2[1] = new AutoLib.ServoStep(claimServo, 1.0);
 
         samplePath3 = new AutoLib.Step[6];
@@ -125,28 +125,5 @@ public class DepotAuto extends AutoOpMode {
         mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
         mSequence.add(doStepStep);
         mSequence.add(new AutoLib.ServoStep(claimServo, 0.4));
-
-        /*
-        Trajectory leaveHang = drive.trajectoryBuilder()    // drive 5 inches
-                .lineTo(new Vector2d(5, 0))
-                .build();
-
-        Trajectory sample[] = new Trajectory[] {
-                drive.trajectoryBuilder().splineTo(new Pose2d(13, 12, 0)).build(),
-                drive.trajectoryBuilder().lineTo(new Vector2d(13, 0)).build(),
-                drive.trajectoryBuilder().splineTo(new Pose2d(13, -12, 0)).build()};
-        */
-
-        //AutoLib.TurnByTimeStep turnStep = new AutoLib.GyroRotateStep(this, motors, 0.0f, gyro, 0.2,0, 0.5);
-
-
-        //mSequence.add(new SampleStep(mVlib, this, data, turnStep));   // find the cheddar
-        //mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(drive, mDashboard, leaveHang));  // move away from lander
-        //mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, 1, 1.5, true)); // lower the lift
-        //mSequence.add(new AutoLib.MoveByTimeStep(motors, 0.5, 2.5, true));
-        //mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(drive, mDashboard, sample, data)); // hit the cheddar
-        //mSequence.add(new AutoLib.ServoStep(claimServo, 1.0));  // drop the marker
-        //mSequence.add(new AutoLib.MoveByTimeStep(motors, -0.4, 0.5, true));
-        //mSequence.add(new AutoLib.ServoStep(claimServo, 0.0));
     }
 }
