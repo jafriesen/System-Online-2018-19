@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
-import org.firstinspires.ftc.teamcode._Libs.RoadRunnerImplementer;
 import org.firstinspires.ftc.teamcode._Libs.VuforiaLib_RoverRuckus;
 
 public class SampleStep extends AutoLib.Step {

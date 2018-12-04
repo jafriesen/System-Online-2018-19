@@ -46,7 +46,7 @@ public class DepotAuto extends AutoOpMode {
     public static double Angle2 = -45;
     public static double Distance4 = 65;
     public static double MaxPower = 0.5;
-    public static double AngleTolerance = 1.0;
+    public static double AngleTolerance = 2.0;
 
     public DepotAuto() {
         msStuckDetectInit = 10000;
