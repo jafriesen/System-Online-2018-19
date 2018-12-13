@@ -49,6 +49,7 @@ public class LiftTankDrive extends OpMode {
     DcMotor motorBackLeft;
     Servo intake;
     DcMotor motorLift1, motorLift2;
+    DcMotor intakeExtend;
 
 
     float power = 0;
@@ -66,6 +67,7 @@ public class LiftTankDrive extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("bl");
         motorLift1 = hardwareMap.dcMotor.get("l1");
         motorLift2 = hardwareMap.dcMotor.get("l2");
+        intakeExtend = hardwareMap.dcMotor.get("extend");
 
         intake = hardwareMap.servo.get("intake");
 
@@ -152,6 +154,8 @@ public class LiftTankDrive extends OpMode {
             motorLift1.setPower(0);
             motorLift2.setPower(0);
         }
+
+        intakeExtend.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
 
         if(lowPowerLift){
             telemetry.addData("Low Power Lift", "On");
