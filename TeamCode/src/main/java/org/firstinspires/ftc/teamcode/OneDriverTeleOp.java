@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="Tank Drive w/ Lift", group="TeleOp")
-public class LiftTankDrive extends OpMode {
+@TeleOp(name="Tank Drive w/ Lift (One Controller)", group="TeleOp")
+public class OneDriverTeleOp extends OpMode {
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
@@ -56,7 +56,7 @@ public class LiftTankDrive extends OpMode {
     float power = 0;
     boolean lowPowerLift = false;
 
-    public LiftTankDrive() {
+    public OneDriverTeleOp() {
 
     }
 
@@ -108,10 +108,10 @@ public class LiftTankDrive extends OpMode {
         rt = (float)scaleInput(rt);
         lt = (float)scaleInput(lt);
 
-        if(gamepad2.a) {
+        if(gamepad1.a) {
             intakeServo.setPosition(0.25);
         }
-        else if (gamepad2.b) {
+        else if (gamepad1.b) {
             intakeServo.setPosition(0.0);
         }
 
@@ -157,8 +157,16 @@ public class LiftTankDrive extends OpMode {
             motorLift2.setPower(0);
         }
 
-        intakeSpin.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
-        intakeExtend.setPower(gamepad2.right_stick_y);
+        intakeExtend.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
+        if(gamepad1.left_bumper) {
+            intakeSpin.setPower(-1.0);
+        }
+        else if(gamepad1.right_bumper) {
+            intakeSpin.setPower(1.0);
+        }
+        else {
+            intakeSpin.setPower(0.0);
+        }
 
 
         if(lowPowerLift){
