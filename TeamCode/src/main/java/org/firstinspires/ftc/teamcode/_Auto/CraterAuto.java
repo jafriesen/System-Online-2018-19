@@ -36,6 +36,7 @@ public class CraterAuto extends AutoOpMode {
     private SampleTankDriveREV drive;
     private DcMotor hangMotors[];
     private DcMotorEx motors[];
+    private DcMotor extendMotor, spinMotor;
     private Servo claimServo;
     private AutoLib.Data data;
     private BNO055IMU gyro;
@@ -56,8 +57,8 @@ public class CraterAuto extends AutoOpMode {
     public static double Angle2 = 75;
     public static double Distance4 = 35;
     public static double Angle3 = 135;
-    public static double Distance5 = 35;
-    public static double Distance6 = 65;
+    public static double Distance5 = 30;
+    public static double Distance6 = 60;
     public static double MaxPower = 0.5;
     public static double AngleTolerance = 2.0;
 
@@ -75,12 +76,15 @@ public class CraterAuto extends AutoOpMode {
         hangMotors[0] = mHardwareFactory.getDcMotor("l1");
         hangMotors[1] = mHardwareFactory.getDcMotor("l2");
 
+        extendMotor = mHardwareFactory.getDcMotor("extend");
+        spinMotor = mHardwareFactory.getDcMotor("spin");
+
         gyro = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         gyro.initialize(parameters);
 
-        claimServo = mHardwareFactory.getServo("marker");
+        claimServo = mHardwareFactory.getServo("intake");
         data = new AutoLib.Data();
         data.Float = 2;
 
@@ -91,6 +95,9 @@ public class CraterAuto extends AutoOpMode {
         hangMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hangMotors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hangMotors[1].setDirection(DcMotor.Direction.REVERSE);
+
+        hangMotors[0].setPower(-0.15);
+        hangMotors[1].setPower(-0.15);
 
         motors = new DcMotorEx[4];
 
@@ -135,6 +142,10 @@ public class CraterAuto extends AutoOpMode {
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance4).build()));
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle3, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance5).build()));
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 1.0, 1.5, false));
+        mSequence.add(new AutoLib.ServoStep(claimServo, 0.00));
+        mSequence.add(new AutoLib.MotorSetPower(spinMotor, -1.0));
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -1.0, 1.0, true));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance6).build()));
     }
 }
