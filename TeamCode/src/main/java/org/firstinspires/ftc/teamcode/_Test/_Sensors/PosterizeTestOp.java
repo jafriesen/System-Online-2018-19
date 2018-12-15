@@ -93,19 +93,44 @@ public class PosterizeTestOp extends OpMode {
             cubeX = findCube(bmOutArray, bmIn.getHeight(), bmIn.getWidth());
 
             blobs = blobDetector.getBlobs(pixels);
+            for(int i = 0; i < blobs.size(); i++){
+                if(blobs.get(i).color.getColor() == Color.YELLOW){
+                    telemetry.addData("Yellow Width", blobs.get(i).width);
+                    if(blobs.get(i).width > 25 && blobs.get(i).width > 25){
+                        cubeX = blobs.get(i).x;
+                        if(cubeX < bmIn.getWidth()/3){
+                            cubePosition = 1;
+                        }else if(cubeX > bmIn.getWidth()/3 && cubeX < 2 * bmIn.getWidth() /3){
+                            cubePosition = 2;
+                        }else{
+                            cubePosition = 3;
+                        }
+                    }
+                }else if(blobs.get(i).color.getColor() == Color.WHITE){
+                    telemetry.addData("White Width", blobs.get(i).width);
+                }
 
+
+            }
+
+            telemetry.addData("Blobs", blobs.size());
+            telemetry.addData("Frame Width", bmIn.getWidth());
+            telemetry.addData("Sample", cubePosition);
+
+            /*
             for(int i = 0; i < blobs.size(); i++){
                 int hwratio = blobs.get(i).width / blobs.get(i).height;
                 if(blobs.get(i).color.getColor() == Color.BLACK|| blobs.get(i).color.getColor() == Color.WHITE ){
                     blobs.remove(i);
                 }else if(hwratio < 0.75 || hwratio > 1.33333){
-                    blobs.remove(i);
+                    //blobs.remove(i);
                 }
                 else {
                     telemetry.addData("Cube X", blobs.get(i).width);
                     telemetry.addData("Distance", 12.0 * (44.0/(double)blobs.get(i).width));
                 }
             }
+            *.
 
             if(cubeX < bmIn.getWidth()/3){
                 cubePosition = 1;
@@ -184,7 +209,9 @@ public class PosterizeTestOp extends OpMode {
                     simple[ncols*r+c] = 0xFF000000;
                 }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
                     simple[r*ncols+c] = 0xFFFFFF00;
-                }else {
+                }else if(Y > 0xC0){
+                    simple[r*ncols+c] = 0xFFFFFFFF;
+                } else {
                     //simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;
                     simple[ncols*r+c] = 0xFF000000;
                 }
