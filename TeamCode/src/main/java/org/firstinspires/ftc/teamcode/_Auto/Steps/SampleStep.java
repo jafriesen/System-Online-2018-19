@@ -51,10 +51,10 @@ public class SampleStep extends AutoLib.Step {
             cubeX = findCube(bmOutArray, bmIn.getHeight(), bmIn.getWidth());
             if (cubeX < bmIn.getWidth() / 3) {
                 cubePositionCount[0]++;
-            } else if (cubeX > bmIn.getWidth() * 2 / 3) {
-                cubePositionCount[2]++;
-            } else {
+            } else if (cubeX < bmIn.getWidth() * 2 / 3 && cubeX > bmIn.getWidth() / 3) {
                 cubePositionCount[1]++;
+            } else {
+                cubePositionCount[2]++;
             }
 
             if(cubePositionCount[0] > cubePositionCount[1] && cubePositionCount[0] > cubePositionCount[2]) {
