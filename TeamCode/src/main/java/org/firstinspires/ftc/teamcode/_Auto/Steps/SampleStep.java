@@ -62,6 +62,7 @@ public class SampleStep extends AutoLib.Step {
         if (bmIn != null) {
             // create the output bitmap we'll display on the RC phone screen
             bmIn.getPixels(bmArray, 0, bmIn.getWidth(), 0, 0, bmIn.getWidth(), bmIn.getHeight());
+
             convertToSimpleColorRaster(bmArray, middleArray, bmIn.getHeight(), bmIn.getWidth(), bmIn.getWidth());
             erosion(middleArray, intermediateArray, bmIn.getHeight(),bmIn.getWidth(), 0xFFFFFF00);
             erosion(intermediateArray, bmOutArray, bmIn.getHeight(),bmIn.getWidth(), 0xFFFFFFFF);
@@ -96,6 +97,7 @@ public class SampleStep extends AutoLib.Step {
                 }else if(whiteAvgX > bmIn.getWidth()/2){
                     cubePositionCount[0]++;
                 }
+
             }
 
             if(cubePositionCount[0] > cubePositionCount[1] && cubePositionCount[0] > cubePositionCount[2]) {

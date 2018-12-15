@@ -47,8 +47,10 @@ public class LiftTankDrive extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    Servo intake;
+    Servo intakeServo;
     DcMotor motorLift1, motorLift2;
+    DcMotor intakeExtend;
+    DcMotor intakeSpin;
 
 
     float power = 0;
@@ -66,8 +68,10 @@ public class LiftTankDrive extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("bl");
         motorLift1 = hardwareMap.dcMotor.get("l1");
         motorLift2 = hardwareMap.dcMotor.get("l2");
+        intakeExtend = hardwareMap.dcMotor.get("extend");
+        intakeSpin = hardwareMap.dcMotor.get("spin");
 
-        intake = hardwareMap.servo.get("intake");
+        intakeServo = hardwareMap.servo.get("intake");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -105,10 +109,10 @@ public class LiftTankDrive extends OpMode {
         lt = (float)scaleInput(lt);
 
         if(gamepad1.a) {
-            intake.setPosition(0.25);
+            intakeServo.setPosition(0.25);
         }
         else if (gamepad1.b) {
-            intake.setPosition(0.0);
+            intakeServo.setPosition(0.0);
         }
 
         // clip the right/left values so that the values never exceed +/- 1
@@ -152,6 +156,10 @@ public class LiftTankDrive extends OpMode {
             motorLift1.setPower(0);
             motorLift2.setPower(0);
         }
+
+        intakeSpin.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
+        intakeExtend.setPower(gamepad2.right_stick_y);
+
 
         if(lowPowerLift){
             telemetry.addData("Low Power Lift", "On");
