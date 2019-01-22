@@ -18,12 +18,12 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
  */
 @Config
 public class Elevator {
-    public static final MotorConfigurationType MOTOR_CONFIG =
+    private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     public static double SPOOL_RADIUS = 1; // in
-    public static double GEAR_RATIO = 1; // output/input
+    public static double GEAR_RATIO = 1; // output (spool) speed / input (motor) speed
 
     // the operating range of the elevator is restricted to [0, MAX_HEIGHT]
     public static double MAX_HEIGHT = 10; // in
@@ -49,6 +49,14 @@ public class Elevator {
 
     private static double encoderTicksToInches(int ticks) {
         return SPOOL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public static double rpmToVelocity(double rpm) {
+        return rpm * GEAR_RATIO * 2 * Math.PI * SPOOL_RADIUS / 60.0;
+    }
+
+    public static double getMaxRpm() {
+        return MOTOR_CONFIG.getMaxRPM();
     }
 
     public Elevator(HardwareMap hardwareMap) {

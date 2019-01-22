@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
  */
 @Config
 public class Arm {
-    public static final MotorConfigurationType MOTOR_CONFIG =
+    private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
@@ -50,6 +50,14 @@ public class Arm {
         return 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
+    public static double rpmToVelocity(double rpm) {
+        return rpm * GEAR_RATIO * 2 * Math.PI / 60.0;
+    }
+
+    public static double getMaxRpm() {
+        return MOTOR_CONFIG.getMaxRPM();
+    }
+
     public Arm(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "armMotor");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -62,7 +70,7 @@ public class Arm {
         // of motion (e.g., gravity, kinetic friction, or a combination thereof), it may be
         // beneficial to compensate for it here (assuming no velocity PID) like so:
         // e.g., controller = new PIDFController(PID, kV, kA, kStatic,
-        //                                       angle -> kA * 9.81 * Math.cos(angle - VERT_ANGLE));
+        //                                       angle -> kA * 9.81 * Math.sin(angle - VERT_ANGLE));
         controller = new PIDFController(PID, kV, kA, kStatic);
         offset = motor.getCurrentPosition();
     }
