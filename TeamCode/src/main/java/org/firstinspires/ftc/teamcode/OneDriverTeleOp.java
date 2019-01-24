@@ -47,7 +47,7 @@ public class OneDriverTeleOp extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    Servo intakeServo;
+    Servo intakeFlip, intakeBar1, intakeBar2;
     DcMotor motorLift1, motorLift2;
     DcMotor intakeExtend;
     DcMotor intakeSpin;
@@ -55,6 +55,7 @@ public class OneDriverTeleOp extends OpMode {
 
     float power = 0;
     boolean lowPowerLift = false;
+    boolean bPressed = false, fliped = false;
 
     public OneDriverTeleOp() {
 
@@ -71,7 +72,9 @@ public class OneDriverTeleOp extends OpMode {
         intakeExtend = hardwareMap.dcMotor.get("extend");
         intakeSpin = hardwareMap.dcMotor.get("spin");
 
-        intakeServo = hardwareMap.servo.get("intake");
+        intakeFlip = hardwareMap.servo.get("flip");
+        intakeBar1 = hardwareMap.servo.get("b1");
+        intakeBar2 = hardwareMap.servo.get("b2");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -88,6 +91,7 @@ public class OneDriverTeleOp extends OpMode {
         motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lowPowerLift = false;
     }
@@ -108,12 +112,23 @@ public class OneDriverTeleOp extends OpMode {
         rt = (float)scaleInput(rt);
         lt = (float)scaleInput(lt);
 
-        if(gamepad1.a) {
-            intakeServo.setPosition(0.25);
+        if(gamepad1.y) {
+            intakeFlip.setPosition(1.00);
         }
-        else if (gamepad1.b) {
-            intakeServo.setPosition(0.0);
+        else {
+            intakeFlip.setPosition(0.4);
         }
+
+        if(gamepad1.x) {
+            intakeBar1.setPosition(0);
+            intakeBar2.setPosition(1.0);
+        }
+        else {
+            intakeBar1.setPosition(1.0);
+            intakeBar2.setPosition(0);
+        }
+
+
 
         // clip the right/left values so that the values never exceed +/- 1
         left = Range.clip(left, -1, 1);
@@ -122,20 +137,10 @@ public class OneDriverTeleOp extends OpMode {
         lt = Range.clip(lt,(float)0,(float)0.5);
         liftPower = rt - lt;
 
-        // write the values to the motors
-        boolean slowMode = gamepad1.left_bumper;
-        if(slowMode) {
-            motorFrontRight.setPower(right/4);
-            motorBackRight.setPower(right/4);
-            motorFrontLeft.setPower(left/4);
-            motorBackLeft.setPower(left/4);
-        }
-        else {
-            motorFrontRight.setPower(right);
-            motorBackRight.setPower(right);
-            motorFrontLeft.setPower(left);
-            motorBackLeft.setPower(left);
-        }
+        motorFrontRight.setPower(right);
+        motorBackRight.setPower(right);
+        motorFrontLeft.setPower(left);
+        motorBackLeft.setPower(left);
 
         if(gamepad1.x){
             lowPowerLift = true;
@@ -143,10 +148,7 @@ public class OneDriverTeleOp extends OpMode {
             lowPowerLift = false;
         }
 
-        if(lowPowerLift) {
-            motorLift1.setPower(-0.15);
-            motorLift2.setPower(-0.15);
-        } else if(gamepad1.dpad_up){
+        if(gamepad1.dpad_up){
             motorLift1.setPower(1);
             motorLift2.setPower(1);
         }else if(gamepad1.dpad_down){
