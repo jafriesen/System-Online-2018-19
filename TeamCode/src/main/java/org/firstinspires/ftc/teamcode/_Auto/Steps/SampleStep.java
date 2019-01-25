@@ -5,8 +5,16 @@ import android.graphics.Bitmap;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.Blobs.image.Color;
+import org.firstinspires.ftc.teamcode.Blobs.image.Pixel;
+import org.firstinspires.ftc.teamcode.Blobs.blobdetect.BlobDetection;
+import org.firstinspires.ftc.teamcode.Blobs.blobdetect.Blob;
+
 import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 import org.firstinspires.ftc.teamcode._Libs.VuforiaLib_RoverRuckus;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class SampleStep extends AutoLib.Step {
 
@@ -16,12 +24,14 @@ public class SampleStep extends AutoLib.Step {
     AutoLib.Timer mTimer;
     boolean save;
     AutoLib.Data data;
+    BlobDetection blobDetector;
 
     public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode) {
         this.mVLib = mVLib;
         this.opMode = opMode;
         this.cubePositionCount = new int[3];
         this.save = false;
+        blobDetector = new BlobDetection();
     }
 
     public SampleStep(VuforiaLib_RoverRuckus mVLib, OpMode opMode, AutoLib.Data data){
@@ -31,6 +41,7 @@ public class SampleStep extends AutoLib.Step {
         this.cubePositionCount = new int[3];
         this.save = true;
         mTimer = new AutoLib.Timer(1.0);
+        blobDetector = new BlobDetection();
     }
 
     @Override
@@ -38,6 +49,8 @@ public class SampleStep extends AutoLib.Step {
         Bitmap bmIn = mVLib.getBitmap(4);
         int bmArray[] = new int[bmIn.getWidth()*bmIn.getWidth()];
         int bmOutArray[] = new int[bmIn.getWidth()*bmIn.getHeight()];
+        Pixel pixels[][] = new Pixel[bmIn.getHeight()][bmIn.getWidth()];
+        List<Blob> blobs = new LinkedList<Blob>();
         int cubeX = 0;
 
         if(firstLoopCall() && mTimer != null) {
@@ -47,24 +60,57 @@ public class SampleStep extends AutoLib.Step {
         if (bmIn != null) {
             // create the output bitmap we'll display on the RC phone screen
             bmIn.getPixels(bmArray, 0, bmIn.getWidth(), 0, 0, bmIn.getWidth(), bmIn.getHeight());
+
             convertToSimpleColorRaster(bmArray, bmOutArray, bmIn.getHeight(), bmIn.getWidth(), bmIn.getWidth());
-            cubeX = findCube(bmOutArray, bmIn.getHeight(), bmIn.getWidth());
-            if (cubeX < bmIn.getWidth() / 3) {
-                cubePositionCount[0]++;
-            } else if (cubeX < bmIn.getWidth() * 2 / 3 && cubeX > bmIn.getWidth() / 3) {
-                cubePositionCount[1]++;
-            } else {
-                cubePositionCount[2]++;
+            convertToPixels(bmOutArray, pixels, bmIn.getWidth(), bmIn.getHeight());
+
+            blobs = blobDetector.getBlobs(pixels);
+
+            int whiteAvgX = 0;
+            boolean foundGold = false;
+            for(int i = 0; i < blobs.size(); i++) {
+                if (blobs.get(i).color.getColor() == Color.YELLOW && blobs.get(i).width > 15 && blobs.get(i).width < 40) {
+                    cubeX = blobs.get(i).x;
+                    if (cubeX < bmIn.getWidth() / 3) {
+                        cubePositionCount[2]++;
+                    } else if (cubeX > bmIn.getWidth() / 3 && cubeX < bmIn.getWidth() * 2 / 3) {
+                        cubePositionCount[1]++;
+                    } else if (cubeX > bmIn.getWidth() * 2 / 3) {
+                        cubePositionCount[0]++;
+                    } else {
+                        cubePositionCount[2]++;
+                    }
+                    foundGold = true;
+                }
+
+                if (blobs.get(i).color.getColor() == Color.WHITE && blobs.get(i).width > 15 && blobs.get(i).width < 40) {
+                    if (whiteAvgX == 0) {
+                        whiteAvgX += blobs.get(i).x;
+                    } else {
+                        whiteAvgX += blobs.get(i).x;
+                        whiteAvgX /= 2;
+                    }
+                }
+
+            }
+            if(!foundGold){
+                if(whiteAvgX < bmIn.getWidth()/2){
+                    cubePositionCount[2]++;
+                }else if(whiteAvgX > bmIn.getWidth()/2){
+                    cubePositionCount[0]++;
+                }
+
             }
 
-            if(cubePositionCount[0] > cubePositionCount[1] && cubePositionCount[0] > cubePositionCount[2]) {
-                cubePosition = 1;
+
+            if(cubePositionCount[2] > cubePositionCount[1] && cubePositionCount[2] > cubePositionCount[0]) {
+                cubePosition = 3;
             }
             else if(cubePositionCount[1] > cubePositionCount[0] && cubePositionCount[1] > cubePositionCount[2]) {
                 cubePosition = 2;
             }
             else {
-                cubePosition = 3;
+                cubePosition = 1;
             }
 
             opMode.telemetry.addData("Cube X", cubePosition);
@@ -78,36 +124,25 @@ public class SampleStep extends AutoLib.Step {
     }
 
     public static void convertToSimpleColorRaster(int rgb[], int[] simple, int nrows, int ncols, int frameWidth) {
-        /*
-         *d
-         *Serves color raster encoded in 1D of values 0-5 with
-         * 0 = RED
-         * 1 = GREEN
-         * 2 = BLUE
-         * 3 = WHITE
-         * 4 = GREY
-         * 5 = BLACK
-         * 6 = YELLOW
-         */
+
         for(int r = 0; r < nrows; r++){
             for(int c = 0; c < frameWidth; c++){
                 int red = (rgb[ncols*r+c]&0xFF0000)>>16;
                 int green = (rgb[ncols*r+c]&0xFF00)>>8;
                 int blue = (rgb[ncols*r+c]&0xFF);
-                //int B = (((int)bayer[(r*ncols*2 + c)*2 + 1+2*ncols-ncols*2*getBit(tile,1)-getBit(tile,0)])&0xFF);			//Bottom right (blue)
 
                 double Y = red *  .299000 + green *  .587000 + blue *  .114000;
                 double U  = red * -.168736 + green * -.331264 + blue *  .500000 + 128;
                 double V = red *  .500000 + green * -.418688 + blue * -.081312 + 128;
-                if(r < nrows / 2){
+                if(r > nrows * 2/ 3){
                     simple[ncols*r+c] = 0xFF000000;
                 }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
                     simple[r*ncols+c] = 0xFFFFFF00;
                 }else {
-                    simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;
-                    //simple[ncols*r+c] = 0xFF000000;
+                    //simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;
+                    simple[ncols*r+c] = 0xFF000000;
                 }
-                /*
+                 /*
                 red =(int)(  1.4075 * (V - 128));
                 green = (int)(0- 0.3455 * (U - 128) - (0.7169 * (V - 128)));
                 blue = (int)(1.7790 * (U - 128));
@@ -134,9 +169,12 @@ public class SampleStep extends AutoLib.Step {
                     simple[r * ncols + c] = 0xFF000000;
                 }
                 */
+
             }
         }
     }
+
+
 
     public int findCube(int input[], int nrows, int ncols){
         int averageX[] = new int[nrows];
@@ -165,6 +203,58 @@ public class SampleStep extends AutoLib.Step {
             return total / counted;
         } else{
             return 0;
+        }
+    }
+
+    public void erosion(int input[], int output[], int ncols, int nrows, int color){
+        for(int r = 0; r < nrows; r++){
+            for(int c = 0; c < ncols; c++){
+                if(input[ncols*r + c] == color){
+                    int neigboring = 0;
+                    if(input[ncols*r + c +1] == color){
+                        neigboring++;
+                    }
+                    if(input[ncols*r + c -1] == color){
+                        neigboring++;
+                    }
+                    if(input[ncols*(r+1) + c] == color){
+                        neigboring++;
+                    }
+                    if(input[ncols*(r-1) + c] == color){
+                        neigboring++;
+                    }
+                    if(neigboring > 1){
+                        output[ncols*r + c] = input[ncols*r + c];
+                    }else{
+                        output[ncols*r + c] = 0xFF000000;
+                    }
+                } else{
+                    output[ncols*r + c] = input[ncols*r + c];
+                }
+            }
+        }
+    }
+
+    public void convertToPixels(int input[], Pixel output[][], int ncols, int nrows){
+        for(int r = 0; r < nrows; r++){
+            for(int c = 0; c < ncols; c++){
+                switch (input[ncols*r+c]){
+                    case 0xFF000000:
+                        output[r][c] = new Pixel(Color.BLACK);
+                        break;
+                    case 0xFFFFFF00:
+                        output[r][c] = new Pixel(Color.YELLOW);
+                        break;
+                    case 0xFFFFFFFF:
+                        output[r][c] = new Pixel(Color.WHITE);
+                        break;
+                    default:
+                        output[r][c] = new Pixel(Color.BLACK);
+                        break;
+
+
+                }
+            }
         }
     }
 

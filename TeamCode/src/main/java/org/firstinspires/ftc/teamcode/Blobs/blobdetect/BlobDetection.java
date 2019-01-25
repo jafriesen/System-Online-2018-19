@@ -118,8 +118,8 @@ public class BlobDetection {
                 if (bip != null) {
                     if (!added.contains(bip.id)) {
                         added.add(bip.id);
-                        if (bip.width() >= 4 && bip.height() >= 4 && bip.width() < (pixels[0].length >> 1)
-                                && bip.height() < (pixels.length >> 1) && bip.color.getColor() != Color.GREY) {
+                        if (bip.width() >= 10 && bip.height() >= 10 && bip.width() < (pixels[0].length )
+                                && bip.height() < (pixels.length ) && bip.color.getColor() != Color.GREY) {
                             blobs.add(getBlob(bip));
                         }
                     }
