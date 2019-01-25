@@ -73,8 +73,6 @@ public class PosterizeTestOp extends OpMode {
         // test image access through Vuforia
         Bitmap bmIn = mVLib.getBitmap(4);
         int bmArray[] = new int[bmIn.getWidth()*bmIn.getWidth()];
-        int middleArray[] = new int[bmIn.getWidth()*bmIn.getWidth()];
-        int middle2Array[] = new int[bmIn.getWidth()*bmIn.getWidth()];
         int bmOutArray[] = new int[bmIn.getWidth()*bmIn.getHeight()];
         Pixel pixels[][] = new Pixel[bmIn.getHeight()][bmIn.getWidth()];
         int cubeX = 0;
@@ -85,36 +83,45 @@ public class PosterizeTestOp extends OpMode {
             // create the output bitmap we'll display on the RC phone screen
             mBmOut = Bitmap.createBitmap(bmIn.getWidth(), bmIn.getHeight(), Bitmap.Config.RGB_565);
             bmIn.getPixels(bmArray,0,bmIn.getWidth(),0,0,bmIn.getWidth(),bmIn.getHeight());
-            convertToSimpleColorRaster(bmArray,middleArray,bmIn.getHeight(),bmIn.getWidth(),bmIn.getWidth());
-            erosion(middleArray,middle2Array,bmIn.getHeight(),bmIn.getWidth(),0xFFFFFF00);
-            erosion(middle2Array,bmOutArray,bmIn.getHeight(),bmIn.getWidth(),0xFFFFFFFF);
-            convertToPixels(middle2Array, pixels,bmIn.getWidth(),bmIn.getHeight());
+            convertToSimpleColorRaster(bmArray,bmOutArray,bmIn.getHeight(),bmIn.getWidth(),bmIn.getWidth());
+            convertToPixels(bmOutArray, pixels,bmIn.getWidth(),bmIn.getHeight());
             mBmOut.setPixels(bmOutArray,0,bmIn.getWidth(),0,0,bmIn.getWidth(),bmIn.getHeight());
-            cubeX = findCube(bmOutArray, bmIn.getHeight(), bmIn.getWidth());
-
             blobs = blobDetector.getBlobs(pixels);
+            boolean foundGold = false;
+            int whiteAvgX = 0;
             for(int i = 0; i < blobs.size(); i++){
-                if(blobs.get(i).color.getColor() == Color.YELLOW){
-                    telemetry.addData("Yellow Width", blobs.get(i).width);
-                    if(blobs.get(i).width > 25 && blobs.get(i).width > 25){
-                        cubeX = blobs.get(i).x;
-                        if(cubeX < bmIn.getWidth()/3){
-                            cubePosition = 1;
-                        }else if(cubeX > bmIn.getWidth()/3 && cubeX < 2 * bmIn.getWidth() /3){
-                            cubePosition = 2;
-                        }else{
-                            cubePosition = 3;
-                        }
+                if(blobs.get(i).color.getColor() == Color.YELLOW && blobs.get(i).width > 15 && blobs.get(i).width < 40){
+                    cubeX = blobs.get(i).x;
+                    if(cubeX < bmIn.getWidth() /3){
+                        cubePosition = 3;
+                    }else if(cubeX > bmIn.getWidth()/3 && cubeX < bmIn.getWidth() * 2 / 3){
+                        cubePosition = 2;
+                    }else if(cubeX > bmIn.getWidth() * 2 / 3){
+                        cubePosition = 1;
+                    }else{
+                        cubePosition = 3;
                     }
-                }else if(blobs.get(i).color.getColor() == Color.WHITE){
-                    telemetry.addData("White Width", blobs.get(i).width);
+                    foundGold = true;
+                    telemetry.addData("Cube Width", blobs.get(i).width);
                 }
-
+                if(blobs.get(i).color.getColor() == Color.WHITE && blobs.get(i).width > 15 && blobs.get(i).width < 40){
+                    if(whiteAvgX == 0){
+                        whiteAvgX += blobs.get(i).x;
+                    }else{
+                        whiteAvgX += blobs.get(i).x;
+                        whiteAvgX /= 2;
+                    }
+                }
+            }
+            if(!foundGold){
+                if(whiteAvgX < bmIn.getWidth()/2){
+                    cubePosition = 3;
+                }else if(whiteAvgX > bmIn.getWidth()/2){
+                    cubePosition = 1;
+                }
 
             }
 
-            telemetry.addData("Blobs", blobs.size());
-            telemetry.addData("Frame Width", bmIn.getWidth());
             telemetry.addData("Sample", cubePosition);
 
             /*
@@ -205,7 +212,7 @@ public class PosterizeTestOp extends OpMode {
                 double Y = red *  .299000 + green *  .587000 + blue *  .114000;
                 double U  = red * -.168736 + green * -.331264 + blue *  .500000 + 128;
                 double V = red *  .500000 + green * -.418688 + blue * -.081312 + 128;
-                if(r <  nrows / 2){
+                if(r  > nrows * 2/ 3){
                     simple[ncols*r+c] = 0xFF000000;
                 }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
                     simple[r*ncols+c] = 0xFFFFFF00;
