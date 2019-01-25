@@ -28,9 +28,9 @@ public class GyroTest extends AutoOpMode {
     SensorLib.PID pid;
 
     // parameters of the PID controller for this sequence
-    public static double Kp = 0.03;       // motor power proportional term correction per degree of deviation
-    public static double Ki = 0.05;         // ... integrator term
-    public static double Kd = 0.034;             // ... derivative term
+    public static double Kp = 0;       // motor power proportional term correction per degree of deviation
+    public static double Ki = 0;         // ... integrator term
+    public static double Kd = 0;             // ... derivative term
     public static double KiCutoff = 100.0;    // maximum angle error for which we update integrator
 
     public static double Angle = 90.0;

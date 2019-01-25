@@ -45,10 +45,10 @@ public class CraterAuto extends AutoOpMode {
     private SensorLib.PID pid;
 
     // parameters of the PID controller for this sequence
-    public static double Kp = 0.025;       // motor power proportional term correction per degree of deviation
-    public static double Ki = 0.005;         // ... integrator term
-    public static double Kd = 0.0034;             // ... derivative term
-    public static double KiCutoff = 20.0;    // maximum angle error for which we update integrator
+    public static double Kp = 0.015;       // motor power proportional term correction per degree of deviation
+    public static double Ki = 0.001;         // ... integrator term
+    public static double Kd = 0.002;             // ... derivative term
+    public static double KiCutoff = 100.0;    // maximum angle error for which we update integrator
 
     public static double Distance1 = 5;
     public static double Distance2 = 15;
