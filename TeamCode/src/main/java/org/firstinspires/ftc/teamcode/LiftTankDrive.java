@@ -124,7 +124,18 @@ public class LiftTankDrive extends OpMode {
 
         // write the values to the motors
         boolean slowMode = gamepad1.left_bumper;
-        if(slowMode) {
+        if(gamepad1.right_trigger < 0 ){
+            motorFrontRight.setPower(gamepad1.right_trigger/5.0);
+            motorBackRight.setPower(gamepad1.right_trigger/5.0);
+            motorFrontLeft.setPower(-gamepad1.right_trigger/5.0);
+            motorBackLeft.setPower(-gamepad1.right_trigger/5.0);
+        } else if(gamepad1.left_trigger < 0){
+            motorFrontRight.setPower(-gamepad1.left_trigger/5.0);
+            motorBackRight.setPower(-gamepad1.left_trigger/5.0);
+            motorFrontLeft.setPower(gamepad1.left_trigger/5.0);
+            motorBackLeft.setPower(gamepad1.left_trigger/5.0);
+        }
+        else if(slowMode) {
             motorFrontRight.setPower(right/4);
             motorBackRight.setPower(right/4);
             motorFrontLeft.setPower(left/4);
