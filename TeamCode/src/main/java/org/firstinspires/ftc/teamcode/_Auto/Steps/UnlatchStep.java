@@ -30,7 +30,7 @@ public class UnlatchStep extends AutoLib.Step {
         boolean done = false;
 
         if(firstLoopCall()) {
-            mTimer = new AutoLib.Timer(1.5);
+            mTimer = new AutoLib.Timer(1.7);
             mTimer.start();
         }
 

@@ -78,7 +78,7 @@ public class SampleStep extends AutoLib.Step {
                     } else if (cubeX > bmIn.getWidth() * 2 / 3) {
                         cubePositionCount[0]++;
                     } else {
-                        cubePositionCount[2]++;
+                        cubePositionCount[0]++;
                     }
                     foundGold = true;
                 }
@@ -93,6 +93,7 @@ public class SampleStep extends AutoLib.Step {
                 }
 
             }
+            /*
             if(!foundGold){
                 if(whiteAvgX < bmIn.getWidth()/2){
                     cubePositionCount[2]++;
@@ -101,6 +102,7 @@ public class SampleStep extends AutoLib.Step {
                 }
 
             }
+            */
 
 
             if(cubePositionCount[2] > cubePositionCount[1] && cubePositionCount[2] > cubePositionCount[0]) {
