@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="Tank Drive w/ Lift (One Controller)", group="TeleOp")
-public class OneDriverTeleOp extends OpMode {
+@TeleOp(name="USE THIS ONE", group="TeleOp")
+public class TwoDriverTeleOp extends OpMode {
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
@@ -57,7 +57,7 @@ public class OneDriverTeleOp extends OpMode {
     boolean lowPowerLift = false;
     boolean bPressed = false, fliped = false;
 
-    public OneDriverTeleOp() {
+    public TwoDriverTeleOp() {
 
     }
 
@@ -100,8 +100,8 @@ public class OneDriverTeleOp extends OpMode {
     public void loop() {
         float right = gamepad1.left_stick_y;    // currently switched so switch which side is front
         float left = gamepad1.right_stick_y;
-        float rt = (1 - gamepad1.right_trigger)/2;
-        float lt = (1 - gamepad1.left_trigger)/2;
+        float rt = (1 - gamepad1.left_trigger)/2;
+        float lt = (1 - gamepad1.right_trigger)/2;
         float liftPower = 0;
 
 
@@ -112,14 +112,14 @@ public class OneDriverTeleOp extends OpMode {
         rt = (float)scaleInput(rt);
         lt = (float)scaleInput(lt);
 
-        if(gamepad1.y) {
+        if(gamepad2.y) {
             intakeFlip.setPosition(1.00);
         }
         else {
             intakeFlip.setPosition(0.4);
         }
 
-        if(gamepad1.x) {
+        if(gamepad2.x) {
             intakeBar1.setPosition(0);
             intakeBar2.setPosition(1.0);
         }
@@ -137,10 +137,17 @@ public class OneDriverTeleOp extends OpMode {
         lt = Range.clip(lt,(float)0,(float)0.5);
         liftPower = rt - lt;
 
-        motorFrontRight.setPower(right*.7);
-        motorBackRight.setPower(right*.7);
-        motorFrontLeft.setPower(left*.7);
-        motorBackLeft.setPower(left*.7);
+        if(gamepad1.left_bumper) {
+            motorFrontRight.setPower(right*.25);
+            motorBackRight.setPower(right*.25);
+            motorFrontLeft.setPower(left*.25);
+            motorBackLeft.setPower(left*.25);
+        } else {
+            motorFrontRight.setPower(right * .6);
+            motorBackRight.setPower(right * .6);
+            motorFrontLeft.setPower(left * .6);
+            motorBackLeft.setPower(left * .6);
+        }
 
         if(gamepad1.x){
             lowPowerLift = true;
@@ -148,10 +155,10 @@ public class OneDriverTeleOp extends OpMode {
             lowPowerLift = false;
         }
 
-        if(gamepad1.dpad_up){
+        if(gamepad1.dpad_up || gamepad2.dpad_up){
             motorLift1.setPower(1);
             motorLift2.setPower(1);
-        }else if(gamepad1.dpad_down){
+        }else if(gamepad1.dpad_down || gamepad2.dpad_down){
             motorLift1.setPower(-1);
             motorLift2.setPower(-1);
         }else{
@@ -159,16 +166,9 @@ public class OneDriverTeleOp extends OpMode {
             motorLift2.setPower(0);
         }
 
-        intakeExtend.setPower(gamepad1.right_trigger-gamepad1.left_trigger);
-        if(gamepad1.left_bumper) {
-            intakeSpin.setPower(-1.0);
-        }
-        else if(gamepad1.right_bumper) {
-            intakeSpin.setPower(1.0);
-        }
-        else {
-            intakeSpin.setPower(0.0);
-        }
+        intakeExtend.setPower(gamepad2.left_stick_y/2);
+        intakeSpin.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+
 
 
         if(lowPowerLift){

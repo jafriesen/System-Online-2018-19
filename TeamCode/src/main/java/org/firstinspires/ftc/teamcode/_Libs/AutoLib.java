@@ -211,27 +211,40 @@ public class AutoLib {
     // sure you've actually settled at that heading and aren't just "passing through it".
     static public class WaitTimeTestStep extends Step {
         Step mTest;         // the "test" Step
-        Timer mTimer;       // Timer for this Step
+        Timer mTimer, mTimer2;       // Timer for this Step
 
-        public WaitTimeTestStep(Step test, double seconds) {
+        public WaitTimeTestStep(Step test, double seconds, double seconds2) {
             mTest = test;
             mTimer = new Timer(seconds);
+            mTimer2 = new Timer(seconds2);
         }
 
         public boolean loop() {
             super.loop();
 
             // start the Timer on our first call
-            if (firstLoopCall())
+            if (firstLoopCall()) {
                 mTimer.start();
+                mTimer2.start();
+            }
 
             // if the test Step fails, restart the Timer; else let it keep running
-            if (!mTest.loop())
+            if (!mTest.loop()) {
                 mTimer.start();
+                mTimer2.start();
+            }
 
             // return true when time is exhausted --
             // i.e. when the Test has succeeded continuously for the given time
-            return (mTimer.done());
+            if(mTimer.done()) {
+                return true;
+            }
+            if(mTimer2.done()) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
@@ -698,16 +711,24 @@ public class AutoLib {
         private BNO055IMU mSensor;
         private double mHeading;
         private double mTolerance;
+        private Timer mTimer;
 
         public GyroTestHeadingStep(BNO055IMU sensor, double heading, double tol){
             mSensor = sensor;
             mHeading = heading;
             mTolerance = tol;
+            mTimer = new Timer(3);
         }
 
         public boolean loop() {
             super.loop();
 
+            if(firstLoopCall()) {
+                mTimer.start();
+            }
+            if(mTimer.done()) {
+                return true;
+            }
             return (Math.abs(mSensor.getAngularOrientation().firstAngle-mHeading) < mTolerance);
         }
 
@@ -805,7 +826,7 @@ public class AutoLib {
                 }
 
             testStep = new GyroTestHeadingStep(gyro, heading, tolerance);
-            terminateStep = new AutoLib.WaitTimeTestStep(testStep, 1);
+            terminateStep = new AutoLib.WaitTimeTestStep(testStep, 2, 3);
             guideStep = new AutoLib.GyroGuideStep(mode, heading, gyro, pid, null, 0);
             guideStep.setMaxPower(maxPower);
 
