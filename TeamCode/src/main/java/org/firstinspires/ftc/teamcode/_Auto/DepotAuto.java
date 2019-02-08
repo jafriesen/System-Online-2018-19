@@ -42,7 +42,7 @@ public class DepotAuto extends AutoOpMode {
     public static double KiCutoff = 100.0;    // maximum angle error for which we update integrator
 
     public static double Distance1 = 5;
-    public static double Distance2 = 25;
+    public static double Distance2 = 20;
     public static double Angle1 = 45;
     public static double Distance3 = 20;
     public static double Angle2 = -45;
@@ -107,42 +107,54 @@ public class DepotAuto extends AutoOpMode {
 
         pid = new SensorLib.PID((float) Kp, (float) Ki, (float) Kd, (float) KiCutoff);
 
-        samplePath1 = new AutoLib.Step[12];
+        samplePath1 = new AutoLib.Step[16];
         samplePath1[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
         samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
         samplePath1[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle2, (float) AngleTolerance);
         samplePath1[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath1[4] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 2, false);
-        samplePath1[5] = new AutoLib.ServoStep(claimServo, 1.00);
-        samplePath1[6] = new AutoLib.LogTimeStep(this, "wait", 0.5);
-        samplePath1[7] = new AutoLib.ServoStep(claimServo, 0.4);
-        samplePath1[8] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 2, true);
-        samplePath1[9] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
-        samplePath1[10] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
-        samplePath1[11] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath1[4] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.0, false);
+        samplePath1[5] = new AutoLib.ServoStep(intakeBar1, 0.00);
+        samplePath1[6] = new AutoLib.ServoStep(intakeBar2, 1.00);
+        samplePath1[7] = new AutoLib.LogTimeStep(this, "wait", 0.5);
+        samplePath1[8] = new AutoLib.TimedMotorStep(spinMotor, -0.5f, 1, true);
+        samplePath1[9] = new AutoLib.LogTimeStep(this, "wait", 1.0);
+        samplePath1[10] = new AutoLib.ServoStep(intakeBar1, 0.9);
+        samplePath1[11] = new AutoLib.ServoStep(intakeBar2, 0.1);
+        samplePath1[12] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 1.0, true);
+        samplePath1[13] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath1[14] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
+        samplePath1[15] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
 
-        samplePath2 = new AutoLib.Step[7];
-        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(15).build());
-        samplePath2[1] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 2, false);
-        samplePath2[2] = new AutoLib.ServoStep(claimServo, 1.00);
-        samplePath2[3] = new AutoLib.LogTimeStep(this, "wait", 0.5);
-        samplePath2[4] = new AutoLib.ServoStep(claimServo, 0.4);
-        samplePath2[5] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 2, true);
-        samplePath2[6] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(15).build());
+        samplePath2 = new AutoLib.Step[11];
+        samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(10).build());
+        samplePath2[1] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.0, false);
+        samplePath2[2] = new AutoLib.ServoStep(intakeBar1, 0.00);
+        samplePath2[3] = new AutoLib.ServoStep(intakeBar2, 1.00);
+        samplePath2[4] = new AutoLib.LogTimeStep(this, "wait", 0.5);
+        samplePath2[5] = new AutoLib.TimedMotorStep(spinMotor, -0.5f, 1, true);
+        samplePath2[6] = new AutoLib.LogTimeStep(this, "wait", 1.0);
+        samplePath2[7] = new AutoLib.ServoStep(intakeBar1, 0.9);
+        samplePath2[8] = new AutoLib.ServoStep(intakeBar2, 0.1);
+        samplePath2[9] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 1.0, true);
+        samplePath2[10] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(10).build());
 
-        samplePath3 = new AutoLib.Step[12];
+        samplePath3 = new AutoLib.Step[16];
         samplePath3[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
         samplePath3[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
         samplePath3[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle2, (float) AngleTolerance);
         samplePath3[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath3[4] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 2, false);
-        samplePath3[5] = new AutoLib.ServoStep(claimServo, 1.00);
-        samplePath3[6] = new AutoLib.LogTimeStep(this, "wait", 0.5);
-        samplePath3[7] = new AutoLib.ServoStep(claimServo, 0.4);
-        samplePath3[8] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 2, true);
-        samplePath3[9] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
-        samplePath3[10] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
-        samplePath3[11] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath3[4] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.0, false);
+        samplePath3[5] = new AutoLib.ServoStep(intakeBar1, 0.00);
+        samplePath3[6] = new AutoLib.ServoStep(intakeBar2, 1.00);
+        samplePath3[7] = new AutoLib.LogTimeStep(this, "wait", 0.5);
+        samplePath3[8] = new AutoLib.TimedMotorStep(spinMotor, -0.5f, 1, true);
+        samplePath3[9] = new AutoLib.LogTimeStep(this, "wait", 1.0);
+        samplePath3[10] = new AutoLib.ServoStep(intakeBar1, 0.9);
+        samplePath3[11] = new AutoLib.ServoStep(intakeBar2, 0.1);
+        samplePath3[12] = new AutoLib.TimedMotorStep(extendMotor, -0.5, 1.0, true);
+        samplePath3[13] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath3[14] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
+        samplePath3[15] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
 
         doStepStep = new DoStepsStep(samplePath2);
 
@@ -154,7 +166,7 @@ public class DepotAuto extends AutoOpMode {
         mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, -1, 1.4, true)); // lower the lift
         mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
         mSequence.add(doStepStep);
-        mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -105, (float) AngleTolerance));
+        mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -110, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(35).build()));
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -45, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(20).build()));
