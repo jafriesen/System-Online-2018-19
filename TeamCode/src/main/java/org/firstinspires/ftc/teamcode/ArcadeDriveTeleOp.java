@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="USE THIS ONE", group="TeleOp")
-public class TwoDriverTeleOp extends OpMode {
+@TeleOp(name="Arcade Drive", group="TeleOp")
+public class ArcadeDriveTeleOp extends OpMode {
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
@@ -57,7 +57,7 @@ public class TwoDriverTeleOp extends OpMode {
     boolean lowPowerLift = false;
     boolean bPressed = false, fliped = false;
 
-    public TwoDriverTeleOp() {
+    public ArcadeDriveTeleOp() {
 
     }
 
