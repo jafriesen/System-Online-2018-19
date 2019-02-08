@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="USE THIS ONE", group="TeleOp")
-public class TwoDriverTeleOp extends OpMode {
+@TeleOp(name="Arcade Drive", group="TeleOp")
+public class ArcadeDriveTeleOp extends OpMode {
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
@@ -57,7 +57,7 @@ public class TwoDriverTeleOp extends OpMode {
     boolean lowPowerLift = false;
     boolean bPressed = false, fliped = false;
 
-    public TwoDriverTeleOp() {
+    public ArcadeDriveTeleOp() {
 
     }
 
@@ -112,17 +112,20 @@ public class TwoDriverTeleOp extends OpMode {
         rt = (float)scaleInput(rt);
         lt = (float)scaleInput(lt);
 
+        if(gamepad2.y) {
+            intakeFlip.setPosition(1.00);
+        }
+        else {
+            intakeFlip.setPosition(0.4);
+        }
+
         if(gamepad2.x) {
             intakeBar1.setPosition(0);
             intakeBar2.setPosition(1.0);
         }
-        else if(gamepad2.y) {
-            intakeBar1.setPosition(1.0);
-            intakeBar2.setPosition(0.0);
-        }
         else {
-            intakeBar1.setPosition(0.5);
-            intakeBar2.setPosition(0.5);
+            intakeBar1.setPosition(1.0);
+            intakeBar2.setPosition(0);
         }
 
 
@@ -173,8 +176,8 @@ public class TwoDriverTeleOp extends OpMode {
             motorLift2.setPower(0);
         }
 
-        intakeExtend.setPower(gamepad2.left_stick_y*.75);
-        intakeSpin.setPower(gamepad2.right_trigger*.7 - gamepad2.left_trigger*.7);
+        intakeExtend.setPower(gamepad2.left_stick_y/2);
+        intakeSpin.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
 
 
