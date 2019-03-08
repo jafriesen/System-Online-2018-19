@@ -9,16 +9,15 @@ import org.firstinspires.ftc.teamcode._Libs.AutoLib;
 
 
 public class UnlatchStep extends AutoLib.Step {
-    DcMotor mEncoderMotor, mOtherMotor;    // motor to control
+    DcMotor mEncoderMotor;    // motor to control
     double mPower;          // power level to use
     float mEncoderCount;      // target encoder count
     OpMode opMode;
     boolean mStop;          // stop motor when count is reached
     AutoLib.Timer mTimer;
 
-    public UnlatchStep(OpMode opMode, DcMotor encoderMotor, DcMotor otherMotor, double power, float count) {
+    public UnlatchStep(OpMode opMode, DcMotor encoderMotor, double power, float count) {
         mEncoderMotor = encoderMotor;
-        mOtherMotor = otherMotor;
         mPower = power;
         mEncoderCount = count;
         this.opMode = opMode;
@@ -35,12 +34,10 @@ public class UnlatchStep extends AutoLib.Step {
         }
 
         mEncoderMotor.setPower(mPower);
-        mOtherMotor.setPower(mPower);
 
         opMode.telemetry.addData("encoder count", mEncoderMotor.getCurrentPosition());
         opMode.telemetry.addData("power", mPower);
         opMode.telemetry.addData("motor 1 power", mEncoderMotor.getPower());
-        opMode.telemetry.addData("motor 2 power", mOtherMotor.getPower());
         opMode.telemetry.addData("time", mTimer.elapsed());
 
 
@@ -49,7 +46,6 @@ public class UnlatchStep extends AutoLib.Step {
        // done = Math.abs(mEncoderMotor.getCurrentPosition()) > Math.abs(mEncoderCount);
         if(mTimer.done()) {
             mEncoderMotor.setPower(0);
-            mOtherMotor.setPower(0);
             done = true;
         }
         return done;

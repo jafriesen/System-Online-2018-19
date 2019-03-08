@@ -47,8 +47,9 @@ public class TwoDriverTeleOp extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    Servo intakeFlip, intakeBar1, intakeBar2;
-    DcMotor motorLift1, motorLift2;
+    Servo intake1, intake2, outtake;
+    DcMotor motorLift1;
+    DcMotor outtakeExtend;
     DcMotor intakeExtend;
     DcMotor intakeSpin;
 
@@ -68,17 +69,16 @@ public class TwoDriverTeleOp extends OpMode {
         motorBackRight = hardwareMap.dcMotor.get("br");
         motorBackLeft = hardwareMap.dcMotor.get("bl");
         motorLift1 = hardwareMap.dcMotor.get("l1");
-        motorLift2 = hardwareMap.dcMotor.get("l2");
+        outtakeExtend = hardwareMap.dcMotor.get("l2");
         intakeExtend = hardwareMap.dcMotor.get("extend");
         intakeSpin = hardwareMap.dcMotor.get("spin");
 
-        intakeFlip = hardwareMap.servo.get("flip");
-        intakeBar1 = hardwareMap.servo.get("b1");
-        intakeBar2 = hardwareMap.servo.get("b2");
+        outtake = hardwareMap.servo.get("out");
+        intake1 = hardwareMap.servo.get("in1");
+        intake2 = hardwareMap.servo.get("in2");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);    // switch to left motors to switch which side is front
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -90,7 +90,7 @@ public class TwoDriverTeleOp extends OpMode {
         motorBackRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtakeExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lowPowerLift = false;
@@ -113,16 +113,24 @@ public class TwoDriverTeleOp extends OpMode {
         lt = (float)scaleInput(lt);
 
         if(gamepad2.x) {
-            intakeBar1.setPosition(0);
-            intakeBar2.setPosition(1.0);
+            intake1.setPosition(0);
+            intake2.setPosition(1.0);
         }
         else if(gamepad2.y) {
-            intakeBar1.setPosition(1.0);
-            intakeBar2.setPosition(0.0);
+            intake1.setPosition(1.0);
+            intake2.setPosition(0.0);
         }
         else {
-            intakeBar1.setPosition(0.5);
-            intakeBar2.setPosition(0.5);
+            intake1.setPosition(0.5);
+            intake2.setPosition(0.5);
+        }
+
+        if(gamepad2.a){
+            outtake.setPosition(1.0);
+        }else if(gamepad2.b){
+            outtake.setPosition(0.0);
+        }else {
+            outtake.setPosition(0.5);
         }
 
 
@@ -162,19 +170,17 @@ public class TwoDriverTeleOp extends OpMode {
             lowPowerLift = false;
         }
 
-        if(gamepad1.dpad_up || gamepad2.dpad_up){
+        if(gamepad1.dpad_up){
             motorLift1.setPower(1);
-            motorLift2.setPower(1);
-        }else if(gamepad1.dpad_down || gamepad2.dpad_down){
+        }else if(gamepad1.dpad_down){
             motorLift1.setPower(-1);
-            motorLift2.setPower(-1);
         }else{
             motorLift1.setPower(0);
-            motorLift2.setPower(0);
         }
 
         intakeExtend.setPower(gamepad2.left_stick_y*.75);
         intakeSpin.setPower(gamepad2.right_trigger*.7 - gamepad2.left_trigger*.7);
+        outtakeExtend.setPower(gamepad2.right_stick_y*0.75);
 
 
 
@@ -185,7 +191,6 @@ public class TwoDriverTeleOp extends OpMode {
         }
 
         telemetry.addData("Lift Encoder 1", motorLift1.getCurrentPosition());
-        telemetry.addData("Lift Encoder 2", motorLift2.getCurrentPosition());
 
         /*
          * Send telemetry data back to driver station.

@@ -93,16 +93,15 @@ public class SampleStep extends AutoLib.Step {
                 }
 
             }
-            /*
             if(!foundGold){
-                if(whiteAvgX < bmIn.getWidth()/2){
+                if(whiteAvgX > bmIn.getWidth()/2){
                     cubePositionCount[2]++;
-                }else if(whiteAvgX > bmIn.getWidth()/2){
+                }else if(whiteAvgX < bmIn.getWidth()/2){
                     cubePositionCount[0]++;
                 }
 
             }
-            */
+
 
 
             if(cubePositionCount[2] > cubePositionCount[1] && cubePositionCount[2] > cubePositionCount[0]) {
