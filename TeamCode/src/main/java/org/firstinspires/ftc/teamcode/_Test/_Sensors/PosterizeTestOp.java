@@ -92,14 +92,10 @@ public class PosterizeTestOp extends OpMode {
             for(int i = 0; i < blobs.size(); i++){
                 if(blobs.get(i).color.getColor() == Color.YELLOW && blobs.get(i).width > 15 && blobs.get(i).width < 40){
                     cubeX = blobs.get(i).x;
-                    if(cubeX < bmIn.getWidth() /3){
+                    if(cubeX < bmIn.getWidth() /2){
                         cubePosition = 3;
-                    }else if(cubeX > bmIn.getWidth()/3 && cubeX < bmIn.getWidth() * 2 / 3){
+                    }else if(cubeX > bmIn.getWidth()/2){
                         cubePosition = 2;
-                    }else if(cubeX > bmIn.getWidth() * 2 / 3){
-                        cubePosition = 1;
-                    }else{
-                        cubePosition = 3;
                     }
                     foundGold = true;
                     telemetry.addData("Cube Width", blobs.get(i).width);
@@ -114,11 +110,12 @@ public class PosterizeTestOp extends OpMode {
                 }
             }
             if(!foundGold){
-                if(whiteAvgX < bmIn.getWidth()/2){
+                if(whiteAvgX > bmIn.getWidth()/2){
                     cubePosition = 3;
-                }else if(whiteAvgX > bmIn.getWidth()/2){
+                }else if(whiteAvgX < bmIn.getWidth()/2){
                     cubePosition = 1;
                 }
+                telemetry.addData("Silver Avg", whiteAvgX);
 
             }
 
@@ -216,7 +213,7 @@ public class PosterizeTestOp extends OpMode {
                     simple[ncols*r+c] = 0xFF000000;
                 }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
                     simple[r*ncols+c] = 0xFFFFFF00;
-                }else if(Y > 0xC0){
+                }else if(Y > 0xD0){
                     simple[r*ncols+c] = 0xFFFFFFFF;
                 } else {
                     //simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;

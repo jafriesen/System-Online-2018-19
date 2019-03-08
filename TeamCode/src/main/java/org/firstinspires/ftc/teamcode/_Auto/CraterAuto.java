@@ -34,11 +34,10 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 public class CraterAuto extends AutoOpMode {
 
     private SampleTankDriveREV drive;
-    private DcMotor hangMotors[];
+    private DcMotor hangMotors;
     private DcMotorEx motors[];
     private DcMotor extendMotor, spinMotor;
-    private Servo claimServo;
-    private Servo intakeBar1, intakeBar2;
+    private Servo intake1, intake2;
     private AutoLib.Data data;
     private BNO055IMU gyro;
     private AutoLib.Step samplePath1[], samplePath2[], samplePath3[];
@@ -73,9 +72,7 @@ public class CraterAuto extends AutoOpMode {
     public void setup() {
         drive = new SampleTankDriveREV(hardwareMap);
 
-        hangMotors = new DcMotor[2];
-        hangMotors[0] = mHardwareFactory.getDcMotor("l1");
-        hangMotors[1] = mHardwareFactory.getDcMotor("l2");
+        hangMotors = mHardwareFactory.getDcMotor("l1");
 
         extendMotor = mHardwareFactory.getDcMotor("extend");
         spinMotor = mHardwareFactory.getDcMotor("spin");
@@ -84,23 +81,16 @@ public class CraterAuto extends AutoOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         gyro.initialize(parameters);
-
-        claimServo = mHardwareFactory.getServo("flip");
-        intakeBar1 = hardwareMap.servo.get("b1");
-        intakeBar2 = hardwareMap.servo.get("b2");
+        
+        intake1 = hardwareMap.servo.get("b1");
+        intake2 = hardwareMap.servo.get("b2");
         data = new AutoLib.Data();
         data.Float = 2;
 
-        hangMotors[0].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangMotors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hangMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangMotors.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        hangMotors[1].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangMotors[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hangMotors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hangMotors[1].setDirection(DcMotor.Direction.REVERSE);
-
-        hangMotors[0].setPower(-0.4);
-        hangMotors[1].setPower(-0.4);
+        hangMotors.setPower(-0.4);
 
         motors = new DcMotorEx[4];
 
@@ -135,12 +125,11 @@ public class CraterAuto extends AutoOpMode {
 
         doStepStep = new DoStepsStep(samplePath2);
 
-        mSequence.add(new AutoLib.ServoStep(intakeBar1, 1.00));
-        mSequence.add(new AutoLib.ServoStep(intakeBar2, 0.00));
-        mSequence.add(new UnlatchStep(this, hangMotors[1], hangMotors[0], 1.0, 1.8f));
+
+        mSequence.add(new UnlatchStep(this, hangMotors, 1.0, 1.8f));
         mSequence.add(new SampleStep(mVlib, this, data));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
-        mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, -1, 1.4, true)); // lower the lift
+        mSequence.add(new AutoLib.TimedMotorStep(hangMotors, -1, 1.4, true)); // lower the lift
         mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
         mSequence.add(doStepStep);
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle2, (float) AngleTolerance));
@@ -148,9 +137,12 @@ public class CraterAuto extends AutoOpMode {
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle3, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance5).build()));
         mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.5, false));
-        mSequence.add(new AutoLib.ServoStep(claimServo, 1.00));
+        mSequence.add(new AutoLib.ServoStep(intake1, 1.00));
+        mSequence.add(new AutoLib.ServoStep(intake2, 0.00));
+        mSequence.add(new AutoLib.TimedMotorStep(spinMotor, 1.00,1.0,false));
         mSequence.add(new AutoLib.LogTimeStep(this, "wait", 0.5));
-        mSequence.add(new AutoLib.ServoStep(claimServo, 0.4));
+        mSequence.add(new AutoLib.ServoStep(intake1, 0.00));
+        mSequence.add(new AutoLib.ServoStep(intake2, 1.00));
         mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -0.5, 1.5, true));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance6).build()));
     }
