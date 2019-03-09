@@ -66,8 +66,8 @@ public class DepotAuto extends AutoOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         gyro.initialize(parameters);
 
-        intake1 = hardwareMap.servo.get("b1");
-        intake2 = hardwareMap.servo.get("b2");
+        intake1 = hardwareMap.servo.get("in1");
+        intake2 = hardwareMap.servo.get("in2");
 
         data = new AutoLib.Data();
         data.Float = 2;
@@ -77,9 +77,6 @@ public class DepotAuto extends AutoOpMode {
 
         hangMotors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangMotors.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        hangMotors.setPower(-0.4);
 
         motors = new DcMotorEx[4];
 
@@ -98,45 +95,38 @@ public class DepotAuto extends AutoOpMode {
 
         pid = new SensorLib.PID((float) Kp, (float) Ki, (float) Kd, (float) KiCutoff);
 
-        samplePath1 = new AutoLib.Step[7];
+        samplePath1 = new AutoLib.Step[3];
         samplePath1[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
-        samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath1[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle2, (float) AngleTolerance);
-        samplePath1[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath1[4] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
-        samplePath1[5] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
-        samplePath1[6] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath1[2] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
 
-        samplePath2 = new AutoLib.Step[3];
+        samplePath2 = new AutoLib.Step[2];
         samplePath2[0] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(10).build());
-        samplePath2[1] = new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.0, false);
-        samplePath2[2] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(10).build());
+        samplePath2[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(10).build());
 
-        samplePath3 = new AutoLib.Step[7];
+        samplePath3 = new AutoLib.Step[3];
         samplePath3[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
         samplePath3[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath3[2] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle2, (float) AngleTolerance);
-        samplePath3[3] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
-        samplePath3[4] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
-        samplePath3[5] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -Angle1, (float) AngleTolerance);
-        samplePath3[6] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath3[2] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
 
         doStepStep = new DoStepsStep(samplePath2);
 
-        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 0.5, 1.5, false));
-        mSequence.add(new AutoLib.ServoStep(intake1, 1.00));
-        mSequence.add(new AutoLib.ServoStep(intake2, 0.00));
-        mSequence.add(new AutoLib.TimedMotorStep(spinMotor,1.0,1.0,false));
-        mSequence.add(new AutoLib.ServoStep(intake1, 0.00));
-        mSequence.add(new AutoLib.ServoStep(intake2, 1.00));
-        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -0.5, 1.5, false));
-        mSequence.add(new UnlatchStep(this, hangMotors, 1.0, 1.8f));
+        mSequence.add(new AutoLib.ServoStep(intake1, 0.0));
+        mSequence.add(new AutoLib.ServoStep(intake2, 1.0));
+        mSequence.add(new AutoLib.TimedMotorStep(hangMotors, -1.0, 5.0, true));
         mSequence.add(new SampleStep(mVlib, this, data));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
-        mSequence.add(new AutoLib.TimedMotorStep(hangMotors, -1, 1.4, true)); // lower the lift
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -1.0, 2.0, true));
+        mSequence.add(new AutoLib.ServoStep(intake1, 0.5));
+        mSequence.add(new AutoLib.ServoStep(intake2, 0.5));
+        mSequence.add(new AutoLib.LogTimeStep(this, "wait", 0.5));
+        mSequence.add(new AutoLib.TimedMotorStep(spinMotor, -0.5, 1.0, true));
+        mSequence.add(new AutoLib.ServoStep(intake1, 0.0));
+        mSequence.add(new AutoLib.ServoStep(intake2, 1.0));
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 1.0, 2.0, true));
         mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
         mSequence.add(doStepStep);
-        mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -110, (float) AngleTolerance));
+        mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -100, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(35).build()));
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -45, (float) AngleTolerance));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(20).build()));

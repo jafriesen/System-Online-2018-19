@@ -171,16 +171,16 @@ public class TwoDriverTeleOp extends OpMode {
         }
 
         if(gamepad1.dpad_up){
-            motorLift1.setPower(1);
-        }else if(gamepad1.dpad_down){
             motorLift1.setPower(-1);
+        }else if(gamepad1.dpad_down){
+            motorLift1.setPower(1);
         }else{
             motorLift1.setPower(0);
         }
 
-        intakeExtend.setPower(gamepad2.left_stick_y*.75);
-        intakeSpin.setPower(gamepad2.right_trigger*.7 - gamepad2.left_trigger*.7);
-        outtakeExtend.setPower(gamepad2.right_stick_y*0.75);
+        intakeExtend.setPower(gamepad2.left_stick_y);
+        intakeSpin.setPower(gamepad2.right_trigger*.5 - gamepad2.left_trigger*.5);
+        outtakeExtend.setPower(gamepad2.right_stick_y);
 
 
 

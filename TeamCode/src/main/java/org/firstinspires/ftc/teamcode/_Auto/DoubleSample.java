@@ -151,7 +151,7 @@ public class DoubleSample extends AutoOpMode {
 
         mSequence.add(new AutoLib.ServoStep(intakeBar1, 1.00));
         mSequence.add(new AutoLib.ServoStep(intakeBar2, 0.00));
-        mSequence.add(new UnlatchStep(this, hangMotors[1], hangMotors[0], 1.0, 1.8f));
+        //mSequence.add(new UnlatchStep(this, hangMotors[1], hangMotors[0], 1.0, 1.8f));
         mSequence.add(new SampleStep(mVlib, this, data));
         mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
         mSequence.add(new AutoLib.MoveByTimeStep(hangMotors, -1, 1.4, true)); // lower the lift
