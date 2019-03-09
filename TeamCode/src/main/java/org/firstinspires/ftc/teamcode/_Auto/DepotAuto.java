@@ -97,7 +97,7 @@ public class DepotAuto extends AutoOpMode {
 
         samplePath1 = new AutoLib.Step[3];
         samplePath1[0] = new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) Angle1, (float) AngleTolerance);
-        samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
+        samplePath1[1] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(Distance2).build());
         samplePath1[2] = new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().back(Distance2).build());
 
         samplePath2 = new AutoLib.Step[2];
@@ -115,15 +115,16 @@ public class DepotAuto extends AutoOpMode {
         mSequence.add(new AutoLib.ServoStep(intake2, 1.0));
         mSequence.add(new AutoLib.TimedMotorStep(hangMotors, -1.0, 5.0, true));
         mSequence.add(new SampleStep(mVlib, this, data));
-        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward((float) Distance1).build()));
-        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -1.0, 2.0, true));
+        mSequence.add(new RoadRunnerImplementer.Follow2dTrajectory(this, drive, drive.trajectoryBuilder().forward(5).build()));
+        mSequence.add(new AutoLib.LogTimeStep(this, "wait", 1.0));
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 1.0, 2.0, true));
         mSequence.add(new AutoLib.ServoStep(intake1, 0.5));
         mSequence.add(new AutoLib.ServoStep(intake2, 0.5));
         mSequence.add(new AutoLib.LogTimeStep(this, "wait", 0.5));
-        mSequence.add(new AutoLib.TimedMotorStep(spinMotor, -0.5, 1.0, true));
+        mSequence.add(new AutoLib.TimedMotorStep(spinMotor, 1.0, 1.0, true));
         mSequence.add(new AutoLib.ServoStep(intake1, 0.0));
         mSequence.add(new AutoLib.ServoStep(intake2, 1.0));
-        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, 1.0, 2.0, true));
+        mSequence.add(new AutoLib.TimedMotorStep(extendMotor, -1.0, 2.0, true));
         mSequence.add(new ChoosePathStep(doStepStep, samplePath1, samplePath2, samplePath3, data));
         mSequence.add(doStepStep);
         mSequence.add(new AutoLib.GyroRotateStep(this, motors, (float) MaxPower, gyro, pid, (float) -100, (float) AngleTolerance));
