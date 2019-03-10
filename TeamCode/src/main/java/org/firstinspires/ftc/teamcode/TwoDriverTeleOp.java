@@ -84,6 +84,7 @@ public class TwoDriverTeleOp extends OpMode {
         motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -113,12 +114,12 @@ public class TwoDriverTeleOp extends OpMode {
         lt = (float)scaleInput(lt);
 
         if(gamepad2.x) {
-            intake1.setPosition(0);
-            intake2.setPosition(1.0);
+            intake1.setPosition(0.25);
+            intake2.setPosition(0.75);
         }
         else if(gamepad2.y) {
-            intake1.setPosition(1.0);
-            intake2.setPosition(0.0);
+            intake1.setPosition(0.75);
+            intake2.setPosition(0.25);
         }
         else {
             intake1.setPosition(0.5);
@@ -126,7 +127,7 @@ public class TwoDriverTeleOp extends OpMode {
         }
 
         if(gamepad2.a){
-            outtake.setPosition(1.0);
+            outtakeExtend.setTargetPosition(0);
         }else if(gamepad2.b){
             outtake.setPosition(0.0);
         }else {
