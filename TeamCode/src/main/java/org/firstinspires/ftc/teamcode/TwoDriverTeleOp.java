@@ -114,8 +114,8 @@ public class TwoDriverTeleOp extends OpMode {
         lt = (float)scaleInput(lt);
 
         if(gamepad2.x) {
-            intake1.setPosition(0.25);
-            intake2.setPosition(0.75);
+            intake1.setPosition(0.1);
+            intake2.setPosition(0.9);
         }
         else if(gamepad2.y) {
             intake1.setPosition(0.75);
