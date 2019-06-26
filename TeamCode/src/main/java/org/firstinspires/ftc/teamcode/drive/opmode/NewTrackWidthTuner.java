@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.drive.Kinematics;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/NewTrackWidthCalibrationOpMode.java
 import com.acmerobotics.roadrunner.drive.TankDrive;
+=======
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+>>>>>>> 93786f9fe8062a74a4ad578e29cbd07342eac336:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/NewTrackWidthTuner.java
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -15,22 +18,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREV;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
 /*
- * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
+ * Similar to the deprecated OldTrackWidthTuner, this routine attempts to automagically
  * determine the drive track width. The basic idea is to use a motion profile to rotate the robot
  * a certain circumferential distance and compare it to the angle swept out (as measured by the
  * IMU). For robustness, this procedure is repeated a few times, and the final track width is
  * averaged over those runs.
  */
 @Config
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/NewTrackWidthCalibrationOpMode.java
 @Autonomous(name="NewTrackWidthCalibrationOpMode", group="RR")
 public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
+=======
+@Autonomous(group = "drive")
+public class NewTrackWidthTuner extends LinearOpMode {
+>>>>>>> 93786f9fe8062a74a4ad578e29cbd07342eac336:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/NewTrackWidthTuner.java
     public static int CIRCUMFERENTIAL_DISTANCE = 500;
     public static int NUM_TRIALS = 5;
 
@@ -63,15 +71,15 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
             MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     new MotionState(0, 0, 0, 0),
                     new MotionState(CIRCUMFERENTIAL_DISTANCE, 0, 0, 0),
-                    DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
-                    DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
+                    BASE_CONSTRAINTS.maxVel,
+                    BASE_CONSTRAINTS.maxAccel
             );
 
             double startTime = clock.seconds();
             while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > profile.duration()) {
-                    drive.setVelocity(new Pose2d(0, 0, 0));
+                    drive.setDriveSignal(new DriveSignal());
                     break;
                 }
 
@@ -81,14 +89,9 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
                 lastHeading = heading;
 
                 MotionState state = profile.get(elapsedTime);
-                drive.setVelocity(new Pose2d(0, 0,
-                        Kinematics.calculateMotorFeedforward(
-                                state.getV(),
-                                state.getA(),
-                                DriveConstants.kV,
-                                DriveConstants.kA,
-                                DriveConstants.kStatic
-                        )
+                drive.setDriveSignal(new DriveSignal(
+                        new Pose2d(0, 0, state.getV()),
+                        new Pose2d(0, 0, state.getA())
                 ));
 
                 drive.updatePoseEstimate();

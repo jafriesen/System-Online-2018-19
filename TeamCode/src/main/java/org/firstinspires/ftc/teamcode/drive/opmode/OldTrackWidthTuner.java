@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/TrackWidthCalibrationOpMode.java
 import com.acmerobotics.roadrunner.drive.TankDrive;
+=======
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+>>>>>>> 93786f9fe8062a74a4ad578e29cbd07342eac336:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/OldTrackWidthTuner.java
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -19,12 +22,15 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDriveREVOptimized;
  * This routine measures the effective track width of the drive (i.e., the distance between a
  * pair of wheels on opposite sides of the robot). This is required for the robot turn properly
  * during open-loop control.
- *
- * Note: this routine is *deprecated*; NewTrackWidthCalibrationOpMode is recommended instead.
  */
 @Config
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/TrackWidthCalibrationOpMode.java
 @Autonomous(name="TrackWidthCalibrationOpMode", group="RR")
 public class TrackWidthCalibrationOpMode extends LinearOpMode {
+=======
+@Autonomous(group = "drive")
+public class OldTrackWidthTuner extends LinearOpMode {
+>>>>>>> 93786f9fe8062a74a4ad578e29cbd07342eac336:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/opmode/OldTrackWidthTuner.java
     public static int TOTAL_REVOLUTIONS = 10;
     public static double POWER = 0.3;
 
@@ -53,7 +59,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
         double lastHeading = 0;
 
         drive.setPoseEstimate(new Pose2d());
-        drive.setVelocity(new Pose2d(0.0, 0.0,  POWER));
+        drive.setDrivePower(new Pose2d(0.0, 0.0,  POWER));
         while (!isStopRequested() && (!startedMoving || revolutions <= TOTAL_REVOLUTIONS)) {
             double heading = drive.getExternalHeading();
             if (heading >= Math.PI / 2.0) {
@@ -65,7 +71,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
             drive.updatePoseEstimate();
             lastHeading = heading;
         }
-        drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
+        drive.setDriveSignal(new DriveSignal());
         double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (2.0 * Math.PI * TOTAL_REVOLUTIONS);
 
         telemetry.log().clear();

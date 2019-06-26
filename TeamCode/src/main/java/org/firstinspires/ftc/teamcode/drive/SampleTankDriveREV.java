@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -58,6 +60,9 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
 
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
+
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
 
     @Override
@@ -80,10 +85,10 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
     public List<Double> getWheelPositions() {
         double leftSum = 0, rightSum = 0;
         for (DcMotorEx leftMotor : leftMotors) {
-            leftSum += DriveConstants.encoderTicksToInches(leftMotor.getCurrentPosition());
+            leftSum += encoderTicksToInches(leftMotor.getCurrentPosition());
         }
         for (DcMotorEx rightMotor : rightMotors) {
-            rightSum += DriveConstants.encoderTicksToInches(rightMotor.getCurrentPosition());
+            rightSum += encoderTicksToInches(rightMotor.getCurrentPosition());
         }
         return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
     }
@@ -99,7 +104,7 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
     }
 
     @Override
-    public double getExternalHeading() {
+    public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
 }

@@ -27,8 +27,15 @@ public class DriveConstants {
     public static double GEAR_RATIO = 42/40; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 1; // in
 
+<<<<<<< HEAD
     public static double maxVelocity = 20.0;
     public static double maximumAcceleration = 60.0;
+=======
+    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+            30.0, 30.0, 0.0,
+            Math.PI / 2, Math.PI / 2, 0.0
+    );
+>>>>>>> 93786f9fe8062a74a4ad578e29cbd07342eac336
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(maxVelocity, maximumAcceleration, Math.PI / 2, Math.PI / 2);
 
