@@ -38,6 +38,27 @@ public class PosterizeTestOp extends OpMode {
     Bitmap mBmOut;
     BlobDetection blobDetector;
 
+    enum PosterColor {
+        RED(0xFF0000, (short)0),
+        GREEN(0x00FF00, (short)1),
+        BLUE(0x0000FF, (short)2),
+        CYAN(0x00FFFF, (short)3),
+        MAGENTA(0xFF00FF, (short)4),
+        YELLOW(0xFFFF00, (short)5),
+        BLACK(0, (short)6),
+        GREY1(0x333333, (short)7),
+        GREY2(0x666666, (short)8),
+        GREY3(0x999999, (short)9),
+        GREY4(0xCCCCCC, (short)10),
+        WHITE(0xFFFFFF, (short)11);
+        final int rgb;
+        final short code;
+        private PosterColor(int rgb, short code) {
+            this.rgb = rgb;
+            this.code = code;
+        }
+    }
+
     // Constructor
     public PosterizeTestOp() {
     }
@@ -55,6 +76,7 @@ public class PosterizeTestOp extends OpMode {
             }
         });
         blobDetector = new BlobDetection();
+
 
     }
 
@@ -74,7 +96,7 @@ public class PosterizeTestOp extends OpMode {
         Bitmap bmIn = mVLib.getBitmap(4);
         int bmArray[] = new int[bmIn.getWidth()*bmIn.getWidth()];
         int bmOutArray[] = new int[bmIn.getWidth()*bmIn.getHeight()];
-        Pixel pixels[][] = new Pixel[bmIn.getHeight()][bmIn.getWidth()];
+        //Pixel pixels[][] = new Pixel[bmIn.getHeight()][bmIn.getWidth()];
         int cubeX = 0;
         int cubePosition = 0;
 
@@ -83,14 +105,17 @@ public class PosterizeTestOp extends OpMode {
             // create the output bitmap we'll display on the RC phone screen
             mBmOut = Bitmap.createBitmap(bmIn.getWidth(), bmIn.getHeight(), Bitmap.Config.RGB_565);
             bmIn.getPixels(bmArray,0,bmIn.getWidth(),0,0,bmIn.getWidth(),bmIn.getHeight());
-            convertToSimpleColorRaster(bmArray,bmOutArray,bmIn.getHeight(),bmIn.getWidth(),bmIn.getWidth());
-            convertToPixels(bmOutArray, pixels,bmIn.getWidth(),bmIn.getHeight());
+            for(int i = 0; i < bmIn.getWidth()*bmIn.getHeight(); i++){
+                bmOutArray[i] = posterizePixelHSL(bmArray[i],65).rgb;
+            }
+            //convertToSimpleColorRaster(bmArray,bmOutArray,bmIn.getHeight(),bmIn.getWidth(),bmIn.getWidth());convertToPixels(bmOutArray, pixels,bmIn.getWidth(),bmIn.getHeight());
             mBmOut.setPixels(bmOutArray,0,bmIn.getWidth(),0,0,bmIn.getWidth(),bmIn.getHeight());
+            /*-
             blobs = blobDetector.getBlobs(pixels);
             boolean foundGold = false;
             int whiteAvgX = 0;
             for(int i = 0; i < blobs.size(); i++){
-                if(blobs.get(i).color.getColor() == Color.YELLOW && blobs.get(i).width > 15 && blobs.get(i).width < 40 && blobs.get(1).height > 25){
+                if(blobs.get(i).color.getColor() == Color.YELLOW && blobs.get(i).width > 15 && blobs.get(i).width < 40 && blobs.get(1).height > 15){
                     cubeX = blobs.get(i).x;
                     if(cubeX < bmIn.getWidth() /2){
                         cubePosition = 3;
@@ -120,6 +145,7 @@ public class PosterizeTestOp extends OpMode {
             }
 
             telemetry.addData("Sample", cubePosition);
+            */
 
             /*
             for(int i = 0; i < blobs.size(); i++){
@@ -209,12 +235,14 @@ public class PosterizeTestOp extends OpMode {
                 double Y = red *  .299000 + green *  .587000 + blue *  .114000;
                 double U  = red * -.168736 + green * -.331264 + blue *  .500000 + 128;
                 double V = red *  .500000 + green * -.418688 + blue * -.081312 + 128;
-                if(r  > nrows * 2/3){
-                    simple[ncols*r+c] = 0xFF000000;
-                }else if(red > 2.25*blue && green > 1.75*blue && red > 80){
-                    simple[r*ncols+c] = 0xFFFFFF00;
-                }else if(Y > 0xD0){
+                if(Y > 0xE0){
                     simple[r*ncols+c] = 0xFFFFFFFF;
+                }else if(U < 128 && V < 154){
+                    simple[r*ncols+c] = 0xFF00FF00;
+                }else if(U > 179){
+                    simple[r*ncols+c] = 0xFF0000FF;
+                } else if(U < 179 && V > 154){
+                    simple[r*ncols+c] = 0xFFFF0000;
                 } else {
                     //simple[ncols * r + c] = (int) Y | (int) Y << 8 | (int) Y << 16 | 0xFF000000;
                     simple[ncols*r+c] = 0xFF000000;
@@ -331,5 +359,96 @@ public class PosterizeTestOp extends OpMode {
             }
         }
     }
+
+    static PosterColor posterizePixel(int rgb, int dt) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = (rgb) & 0xFF;
+        int rg = red - green;
+        int rb = red - blue;
+        int bg = blue - green;
+        if(rg > dt && rb > dt) {
+            return PosterColor.RED;
+        } else if (rg < -dt && bg < -dt) {
+            return PosterColor.GREEN;
+        } else if (rb < -dt && bg > dt) {
+            return PosterColor.BLUE;
+        } else if (rg < dt && rg > -dt && rb > dt && bg < -dt) {
+            return PosterColor.YELLOW;
+        } else if (rb < dt && rb > -dt && rg > dt && bg > dt) {
+            return PosterColor.MAGENTA;
+        } else if (bg < dt && bg > -dt && rg < -dt && rb < -dt ) {
+            return PosterColor.CYAN;
+        } else {
+            int avg = (red + green + blue + green) >> 2;
+            if(avg < 25) {
+                return PosterColor.BLACK;
+            } else if(avg < 76) {
+                return PosterColor.GREY1;
+            } else if(avg < 127) {
+                return PosterColor.GREY2;
+            } else if(avg < 178) {
+                return PosterColor.GREY3;
+            } else if(avg < 229) {
+                return PosterColor.GREY4;
+            } else {
+                return PosterColor.WHITE;
+            }
+
+        }
+    }
+
+    static PosterColor posterizePixelHSL(int rgb, int dt) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = (rgb) & 0xFF;
+        int max = red > blue ? red > green ? red : green : blue > green ? blue : green;
+        int min = red < blue ? red < green ? red : green : blue < green ? blue : green;
+        int delta = max - min;
+        int h = 0;
+        if(delta == 0){
+            h = 0;
+        }else if(max == red){
+            h = ((green-blue)/delta) % 6;
+        }else if(max == green){
+            h = (blue - red)/delta + 2;
+        }else{
+            h = (red - green)/delta + 4;
+        }
+        h *= 60;
+        int l = (max + min) >> 1;
+        if(delta > dt){
+            if(h > 330 || h < 30){
+                return PosterColor.RED;
+            }else if(h > 30 && h < 90){
+                return PosterColor.YELLOW;
+            }else if( h > 90 && h < 150){
+                return PosterColor.GREEN;
+            }else if(h > 150 && h < 210){
+                return PosterColor.CYAN;
+            }else if(h > 210 && h < 270){
+                return PosterColor.BLUE;
+            }else if(h > 270 && h < 330){
+                return PosterColor.MAGENTA;
+            }
+        }else{
+            if(l < 43){
+                return PosterColor.BLACK;
+            }else if(l > 43 && l < 86){
+                return  PosterColor.GREY1;
+            }else if(l > 86 && l < 129){
+                return PosterColor.GREY2;
+            }else if(l > 129 && l < 152){
+                return PosterColor.GREY3;
+            }else if(l > 152 && l < 195){
+                return PosterColor.GREY4;
+            }else{
+                return PosterColor.WHITE;
+            }
+        }
+        return PosterColor.BLACK;
+    }
+
+
 
 }
